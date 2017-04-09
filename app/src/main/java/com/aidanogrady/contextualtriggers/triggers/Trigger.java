@@ -10,6 +10,7 @@ import java.util.Observer;
  * @author Aidan O'Grady
  * @since 0.0
  */
+public interface Trigger extends Observer {
     /**
      * Notify the user when the contextual information indicates this is the best time to do so.
      */
