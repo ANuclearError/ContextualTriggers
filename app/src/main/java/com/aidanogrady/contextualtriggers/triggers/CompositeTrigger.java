@@ -25,6 +25,16 @@ public abstract class CompositeTrigger implements Trigger {
         mTriggers = new ArrayList<>();
     }
 
+
+    @Override
+    public int getComplexity() {
+        int complexity = 0;
+        for (Trigger trigger: mTriggers) {
+            complexity += trigger.getComplexity();
+        }
+        return complexity;
+    }
+
     /**
      * Constructs a new CompositeTrigger.
      *
@@ -63,12 +73,5 @@ public abstract class CompositeTrigger implements Trigger {
         if (index < 0 || index >= mTriggers.size())
             return null;
         return mTriggers.get(index);
-    }
-
-    @Override
-    public void notifyUser() {
-        for (Trigger trigger: mTriggers) {
-            trigger.notifyUser();
-        }
     }
 }

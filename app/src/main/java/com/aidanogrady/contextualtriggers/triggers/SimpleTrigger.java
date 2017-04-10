@@ -8,4 +8,9 @@ package com.aidanogrady.contextualtriggers.triggers;
  * @since 0.0
  */
 public abstract class SimpleTrigger implements Trigger {
+    @Override
+    public int getComplexity() {
+        // Single a single trigger requires a single data.
+        return 1;
+    }
 }

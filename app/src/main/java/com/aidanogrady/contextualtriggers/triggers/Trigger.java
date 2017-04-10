@@ -12,6 +12,13 @@ import java.util.Observer;
  */
 public interface Trigger extends Observer {
     /**
+     * Returns the complexity of this trigger.
+     *
+     * @return the trigger complexity
+     */
+    int getComplexity();
+
+    /**
      * Notify the user when the contextual information indicates this is the best time to do so.
      */
     void notifyUser();
