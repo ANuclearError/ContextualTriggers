@@ -1,19 +1,18 @@
 package com.aidanogrady.contextualtriggers.context;
 
-import java.util.Observable;
 
 /**
  * Created by thomas on 10/04/17.
  */
 
-public interface ContextAPI {
+public interface ContextAPI  {
 
-    public boolean registerObserver();
+    boolean registerObserver();
 
-    public boolean unregisterObserver();
+    boolean unregisterObserver();
 
-    public void notifyObservers();
+    void notifyObservers();
 
-    public ContextAPI getContext();
+    ContextAPI getContext();
 
 }
