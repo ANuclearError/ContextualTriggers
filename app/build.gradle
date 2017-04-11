@@ -27,6 +27,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support.constraint:constraint-layout:1.0.2"
 
+    compile "com.google.android.gms:play-services-location:$servicesVersion"
     compile "com.google.android.gms:play-services-maps:$servicesVersion"
     compile "com.google.android.gms:play-services-places:$servicesVersion"
     testCompile 'junit:junit:4.12'
