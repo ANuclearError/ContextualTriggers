@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -69,6 +71,7 @@ public class LocationDataSource extends IntentService implements LocationListene
         mLocationRequest.setMaxWaitTime(MAX_WAIT_TIME);
 
         mIsServicesAvailable = isServicesConnected();
+
         setUpLocationClientIfNeeded();
     }
 
@@ -82,6 +85,7 @@ public class LocationDataSource extends IntentService implements LocationListene
 
         setUpLocationClientIfNeeded();
         if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !mRequestInProgress) {
+            Log.e("Tr","potato");
             mRequestInProgress = true;
             mGoogleApiClient.connect();
         }
@@ -95,6 +99,9 @@ public class LocationDataSource extends IntentService implements LocationListene
     @Override
     public void onLocationChanged(Location location) {
         mLocation = location;
+        Toast.makeText(getApplicationContext(),
+                ("Lat " + location.getLatitude() + "Long "+ location.getLongitude()),
+                Toast.LENGTH_LONG).show();
         System.out.printf("Lat %f Long %f", location.getLatitude(), location.getLongitude());
     }
 
