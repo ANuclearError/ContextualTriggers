@@ -2,8 +2,9 @@ package com.aidanogrady.contextualtriggers.context.data;
 
 import android.location.Location;
 
-import com.aidanogrady.contextualtriggers.context.ListenerContext;
 import com.google.android.gms.location.LocationListener;
+
+import java.util.Observable;
 
 
 /**
@@ -11,9 +12,9 @@ import com.google.android.gms.location.LocationListener;
  * near the user.
  *
  * @author Aidan O'Grady
- * @since 0.1
+ * @since 0.0.1
  */
-public class PlacesDataSource extends ListenerContext implements LocationListener {
+public class PlacesDataSource extends Observable implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {

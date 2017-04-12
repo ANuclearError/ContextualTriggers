@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.aidanogrady.contextualtriggers">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +21,18 @@
             </intent-filter>
         </activity>
 
+
         <receiver android:name=".triggers.TriggerManager" />
+
+        <receiver android:name=".BootBroadcastReceiver"
+                 android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".triggers.LocationTrigger" />
+        <service android:name=".context.data.LocationDataSource" />
     </application>
 
 </manifest>

@@ -14,5 +14,4 @@ public interface ContextAPI  {
     void notifyObservers();
 
     ContextAPI getContext();
-
 }

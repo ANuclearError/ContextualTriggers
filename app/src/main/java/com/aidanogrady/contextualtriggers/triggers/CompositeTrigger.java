@@ -26,15 +26,6 @@ public abstract class CompositeTrigger implements Trigger {
     }
 
 
-    @Override
-    public int getComplexity() {
-        int complexity = 0;
-        for (Trigger trigger: mTriggers) {
-            complexity += trigger.getComplexity();
-        }
-        return complexity;
-    }
-
     /**
      * Constructs a new CompositeTrigger.
      *
@@ -44,6 +35,15 @@ public abstract class CompositeTrigger implements Trigger {
         this.mTriggers = triggers;
     }
 
+
+    @Override
+    public int getComplexity() {
+        int complexity = 0;
+        for (Trigger trigger: mTriggers) {
+            complexity += trigger.getComplexity();
+        }
+        return complexity;
+    }
 
     /**
      * Adds the given trigger to the composite trigger.
