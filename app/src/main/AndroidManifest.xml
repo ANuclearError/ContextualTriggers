@@ -35,7 +35,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".triggers.LocationTrigger" />
+        <service android:name=".triggers.LocationTrigger"
+            android:process=":my_process"/>
         <service android:name=".context.data.LocationDataSource" />
     </application>
 
