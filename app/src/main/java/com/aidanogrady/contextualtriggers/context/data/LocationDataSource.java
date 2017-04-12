@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.permissioneverywhere.PermissionEverywhere;
 import com.permissioneverywhere.PermissionResponse;
+import com.permissioneverywhere.PermissionResultCallback;
 
 /**
  * The location data source provides triggers with the current location of the user's device,
@@ -29,7 +30,8 @@ import com.permissioneverywhere.PermissionResponse;
  */
 public class LocationDataSource extends IntentService implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        PermissionResultCallback {
     private static final long UPDATE_INTERVAL = 60 * 1000;
 
     private static final long FASTEST_INTERVAL = 30 * 1000;
@@ -57,6 +59,7 @@ public class LocationDataSource extends IntentService implements LocationListene
     public void onCreate() {
         super.onCreate();
 
+        System.out.println("Creating location data source service");
         mRequestInProgress = false;
 
         mLocationRequest = LocationRequest.create();
@@ -97,41 +100,18 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     public void onConnected(Bundle bundle) {
-        boolean granted = false;
-        try {
-            System.out.println("Getting permission");
-            PermissionResponse res = PermissionEverywhere.getPermission(getApplicationContext(),
-                    new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                    },
-                    1,
-                    "Contextual Triggers",
-                    "This service needs location permissions",
-                    R.mipmap.ic_launcher)
-                    .call();
-            System.out.println("Notification shown");
-            granted = res.isGranted();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        PermissionEverywhere.getPermission(getApplicationContext(),
+                new String[] {
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                },
+                1,
+                "Contextual Triggers",
+                "This service needs location permissions",
+                R.mipmap.ic_launcher)
+                .enqueue(this);
 
-
-
-        if (granted) {
-            System.out.println("Notification worked");
-            boolean coarse = ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-            boolean fine = ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-            if (fine && coarse) {
-                System.out.println("Permissions granted");
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                        mLocationRequest,
-                        this);
-            }
-        }
+        System.out.println("Notification worked");
     }
 
     @Override
@@ -173,4 +153,18 @@ public class LocationDataSource extends IntentService implements LocationListene
         return mLocation;
     }
 
+    @Override
+    public void onComplete(PermissionResponse permissionResponse) {
+        boolean coarse = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean fine = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (fine && coarse) {
+            System.out.println("Permissions granted");
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                    mLocationRequest,
+                    this);
+        }
+    }
 }

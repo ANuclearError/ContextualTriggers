@@ -15,6 +15,7 @@ import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 public class BootBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("System booted");
         Intent locationDataSourceIntent = new Intent(context, LocationDataSource.class);
         context.startService(locationDataSourceIntent);
     }
