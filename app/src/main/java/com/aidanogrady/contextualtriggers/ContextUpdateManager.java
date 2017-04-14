@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -15,7 +17,8 @@ import android.widget.Toast;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 
-import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Kristine on 14/04/2017.
@@ -28,6 +31,10 @@ public class ContextUpdateManager extends Service {
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
 
+    private ConnectivityManager connectivityManager;
+
+    private Set<String> invokedServices;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -37,11 +44,14 @@ public class ContextUpdateManager extends Service {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakeLock.acquire();
 
+        connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+
         Intent stepCounter = new Intent(this, StepCounter.class);
         startService(stepCounter);
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
 
+        invokedServices = new HashSet<>();
         setupAlarm();
 
     }
@@ -85,11 +95,16 @@ public class ContextUpdateManager extends Service {
                         Toast.makeText(getApplicationContext(),
                                 ("Received: Lat " + latitude + "Long "+ longitude),
                                 Toast.LENGTH_LONG).show();
-                        if (latitude != 0.0 && longitude != 0.0) {
+
+                        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                        if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
                             // should get new location and then call other services from here
+                            // invokedServices.add(tag);
                         }
                         break;
                     // add other data sources here
+                    // for any dataservice - update context api and invokedService.remove(tag)
+                    // if set empty - notify trigger manager
                 }
             }
         }
