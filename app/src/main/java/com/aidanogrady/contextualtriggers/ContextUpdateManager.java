@@ -14,11 +14,12 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.aidanogrady.contextualtriggers.context.ContextHolder;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kristine on 14/04/2017.
@@ -33,7 +34,9 @@ public class ContextUpdateManager extends Service {
 
     private ConnectivityManager connectivityManager;
 
-    private Set<String> invokedServices;
+    private List<String> invokedServices;
+
+    private ContextHolder contextHolder;
 
     @Override
     public void onCreate() {
@@ -51,7 +54,9 @@ public class ContextUpdateManager extends Service {
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
 
-        invokedServices = new HashSet<>();
+        invokedServices = new ArrayList<>();
+        contextHolder = new ContextHolder();
+
         setupAlarm();
 
     }
@@ -83,6 +88,7 @@ public class ContextUpdateManager extends Service {
                             // should we handle if no step counter available?
                             // is so, should we use gps and calculate average steps?
                         } else {
+                            contextHolder.setSteps(steps);
                             Toast.makeText(getApplicationContext(),
                                             ("Steps: " + steps),
                                             Toast.LENGTH_LONG).show();
@@ -92,6 +98,7 @@ public class ContextUpdateManager extends Service {
                         double latitude = intent.getDoubleExtra("Latitude", 0.0);
                         double longitude = intent.getDoubleExtra("Longitude", 0.0);
 
+                        contextHolder.setLocation(latitude, longitude);
                         Toast.makeText(getApplicationContext(),
                                 ("Received: Lat " + latitude + "Long "+ longitude),
                                 Toast.LENGTH_LONG).show();

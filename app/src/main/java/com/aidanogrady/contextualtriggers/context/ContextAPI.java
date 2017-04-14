@@ -1,17 +1,16 @@
 package com.aidanogrady.contextualtriggers.context;
 
 
+import java.util.Map;
+
 /**
  * Created by thomas on 10/04/17.
  */
 
 public interface ContextAPI  {
 
-    boolean registerObserver();
+    Map<String, Double> getLocation();
 
-    boolean unregisterObserver();
+    int getSteps();
 
-    void notifyObservers();
-
-    ContextAPI getContext();
 }
