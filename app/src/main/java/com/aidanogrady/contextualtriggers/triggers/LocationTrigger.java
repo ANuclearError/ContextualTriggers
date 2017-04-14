@@ -54,6 +54,14 @@ public class LocationTrigger extends SimpleTrigger {
     }
 
     @Override
+    public void checkForContextChange() {
+
+        //check for context
+        notifyUser();
+
+    }
+
+    @Override
     public void update(Observable observable, Object o) {
         if (o instanceof Location) {
             double latitude = ((Location) o).getLatitude();
