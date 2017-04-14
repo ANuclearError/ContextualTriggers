@@ -46,8 +46,13 @@ public class WeatherDataSource extends AsyncTask{
             JSONObject jsonObject = new JSONObject(buffer.toString());
             JSONArray jsonArray = jsonObject.getJSONArray("list");
             String dateval = (String) jsonArray.getJSONObject(0).get("dt_txt");
+            JSONArray weatherArray = jsonArray.getJSONObject(0).getJSONArray("weather");
+            String weather_main = (String) weatherArray.getJSONObject(0).get("main");
+            String weather_desc = (String) weatherArray.getJSONObject(0).get("description");
 
             System.out.println(dateval);
+            System.out.println(weather_main);
+            System.out.println(weather_desc);
 
             return null;
 
