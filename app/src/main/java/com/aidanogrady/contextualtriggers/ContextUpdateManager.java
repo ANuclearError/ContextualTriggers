@@ -85,7 +85,9 @@ public class ContextUpdateManager extends Service {
                         Toast.makeText(getApplicationContext(),
                                 ("Received: Lat " + latitude + "Long "+ longitude),
                                 Toast.LENGTH_LONG).show();
-                        // should get new location and then call other services from here
+                        if (latitude != 0.0 && longitude != 0.0) {
+                            // should get new location and then call other services from here
+                        }
                         break;
                     // add other data sources here
                 }
