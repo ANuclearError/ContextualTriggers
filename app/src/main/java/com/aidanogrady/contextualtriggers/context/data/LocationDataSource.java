@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 import com.aidanogrady.contextualtriggers.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -34,6 +35,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         PermissionResultCallback {
+
+    private static final String TAG = "LocationDS";
+
     private static final long UPDATE_INTERVAL = 5 * 1000; // 35 * 60 * 1000
 
     private static final long FASTEST_INTERVAL = 1 * 1000; // 30 * 60 * 1000
@@ -85,7 +89,6 @@ public class LocationDataSource extends IntentService implements LocationListene
 
         setUpLocationClientIfNeeded();
         if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !mRequestInProgress) {
-            Log.e("Tr","potato");
             mRequestInProgress = true;
             mGoogleApiClient.connect();
         }
@@ -99,6 +102,14 @@ public class LocationDataSource extends IntentService implements LocationListene
     @Override
     public void onLocationChanged(Location location) {
         mLocation = location;
+        Log.e(TAG, "on Location Changed triggered");
+
+        Intent intent = new Intent(this, ContextUpdateManager.class);
+        intent.putExtra("DataSource", "Location");
+        intent.putExtra("Latitude", location.getLatitude());
+        intent.putExtra("Longitude", location.getLongitude());
+        startService(intent);
+
         Toast.makeText(getApplicationContext(),
                 ("Lat " + location.getLatitude() + "Long "+ location.getLongitude()),
                 Toast.LENGTH_LONG).show();
@@ -132,6 +143,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         mRequestInProgress = false;
         if (connectionResult.hasResolution()) {
             System.out.println("Figure this out later");
+            Toast.makeText(getApplicationContext(),
+                    ("connection failed"),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -149,15 +163,6 @@ public class LocationDataSource extends IntentService implements LocationListene
                     .addApi(LocationServices.API)
                     .build();
         }
-    }
-
-    /**
-     * Returns the location of the device.
-     *
-     * @return location of the device
-     */
-    public Location getLocation() {
-        return mLocation;
     }
 
     @Override

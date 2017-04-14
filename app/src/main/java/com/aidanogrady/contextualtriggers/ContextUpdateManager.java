@@ -79,6 +79,13 @@ public class ContextUpdateManager extends Service {
                         }
                         break;
                     case "Location":
+                        double latitude = intent.getDoubleExtra("Latitude", 0.0);
+                        double longitude = intent.getDoubleExtra("Longitude", 0.0);
+
+                        Toast.makeText(getApplicationContext(),
+                                ("Received: Lat " + latitude + "Long "+ longitude),
+                                Toast.LENGTH_LONG).show();
+                        // should get new location and then call other services from here
                         break;
                     // add other data sources here
                 }
