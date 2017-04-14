@@ -34,9 +34,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         PermissionResultCallback {
-    private static final long UPDATE_INTERVAL = 5 * 1000;
+    private static final long UPDATE_INTERVAL = 5 * 1000; // 35 * 60 * 1000
 
-    private static final long FASTEST_INTERVAL = 1 * 1000;
+    private static final long FASTEST_INTERVAL = 1 * 1000; // 30 * 60 * 1000
 
     private static final long MAX_WAIT_TIME = 5 * UPDATE_INTERVAL;
 

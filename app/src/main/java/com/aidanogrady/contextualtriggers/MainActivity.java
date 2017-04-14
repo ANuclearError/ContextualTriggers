@@ -15,10 +15,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
 
-        WeatherDataSource wsd = new WeatherDataSource();
-        wsd.execute();
-        Intent intent = new Intent(this, LocationDataSource.class);
+        Intent intent = new Intent(this, ContextUpdateManager.class);
         startService(intent);
+
         finish();
     }
 }
