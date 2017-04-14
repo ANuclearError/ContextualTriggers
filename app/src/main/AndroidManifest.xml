@@ -24,8 +24,6 @@
         </activity>
 
 
-        <receiver android:name=".triggers.TriggerManager" />
-
         <receiver
             android:name=".BootBroadcastReceiver"
             android:enabled="true"

@@ -27,6 +27,6 @@ public class ServiceInvoker extends BroadcastReceiver {
         context.startService(locationIntent);
 
         WeatherDataSource wsd = new WeatherDataSource();
-        wsd.execute();
+        wsd.requestWeatherData();
     }
 }
