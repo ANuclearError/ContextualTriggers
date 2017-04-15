@@ -11,11 +11,15 @@ public class ContextHolder implements ContextAPI {
 
     private int steps;
     private Map<String, Double> location;
+    private String weatherMain;
+    private String weatherDescription;
 
     public ContextHolder() {
         // set default values
         this.steps = -1;
         this.location = new HashMap<>();
+        this.weatherMain = "None";
+        this.weatherDescription = "None";
     }
 
     @Override
@@ -36,6 +40,22 @@ public class ContextHolder implements ContextAPI {
     public void setLocation(double latitude, double longitude) {
         location.put("Latitude", latitude);
         location.put("Longitude", longitude);
+    }
+
+    public String getWeatherMain(){
+        return weatherMain;
+    }
+
+    public String getWeatherDescription(){
+        return weatherDescription;
+    }
+
+    public void setWeatherDescription(String description){
+        weatherDescription = description;
+    }
+
+    public void setWeatherMain(String main){
+        weatherMain = main;
     }
 
 }

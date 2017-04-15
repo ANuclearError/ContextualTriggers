@@ -24,7 +24,7 @@ public class StepCounter extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "In onStartCommand");
+        //Log.e(TAG, "In onStartCommand");
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 
@@ -32,7 +32,7 @@ public class StepCounter extends Service implements SensorEventListener {
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
             Log.e(TAG, "successfully registered");
         } else {
-            Log.e(TAG, "no step counter in the device");
+           // Log.e(TAG, "no step counter in the device");
             Intent i = new Intent(this, ContextUpdateManager.class);
             intent.putExtra("DataSource", "Steps");
             intent.putExtra("Count", -1);

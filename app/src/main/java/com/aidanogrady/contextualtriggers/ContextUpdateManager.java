@@ -83,6 +83,7 @@ public class ContextUpdateManager extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent,flags,startId);
         Bundle bundle;
 
         if(intent != null) {
@@ -120,23 +121,33 @@ public class ContextUpdateManager extends Service {
                         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                         if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
 
-                            Intent weatherIntent = new Intent(getApplicationContext(), WeatherDataSource.class);
-                            getApplicationContext().startService(weatherIntent);
+
+                            Intent weatherIntent = new Intent(this, WeatherDataSource.class);
+                            weatherIntent.putExtra("Latitude", latitude);
+                            weatherIntent.putExtra("Longitude", longitude);
+                            startService(weatherIntent);
                             // should get new location and then call other services from here
                             // invokedServices.add(tag);
                         }
+                        break;
+                    case "Weather":
+                        String main = intent.getStringExtra("Main");
+                        String description = intent.getStringExtra("Description");
+
+                        contextHolder.setWeatherMain(main);
+                        contextHolder.setWeatherDescription(description);
+
                         break;
                     // add other data sources here
                     // for any dataservice - update context api and invokedService.remove(tag)
                     // if set empty - notify trigger manager
                 }
+                if(triggerManager != null) {
+                    triggerManager.update();
+                }
             }
         }
 
-
-        if(triggerManager != null) {
-            triggerManager.update();
-        }
         return START_STICKY;
     }
 

@@ -13,4 +13,8 @@ public interface ContextAPI  {
 
     int getSteps();
 
+    String getWeatherMain();
+
+    String getWeatherDescription();
+
 }
