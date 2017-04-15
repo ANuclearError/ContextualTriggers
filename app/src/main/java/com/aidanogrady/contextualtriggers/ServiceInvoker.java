@@ -26,7 +26,7 @@ public class ServiceInvoker extends BroadcastReceiver {
         Intent locationIntent = new Intent(context, LocationDataSource.class);
         context.startService(locationIntent);
 
-        WeatherDataSource wsd = new WeatherDataSource();
-        wsd.requestWeatherData();
+        Intent weatherIntent = new Intent(context, WeatherDataSource.class);
+        context.startService(weatherIntent);
     }
 }

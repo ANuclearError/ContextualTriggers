@@ -1,10 +1,12 @@
 package com.aidanogrady.contextualtriggers.context.data;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 
@@ -18,15 +20,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class WeatherDataSource extends Service{
+public class WeatherDataSource extends IntentService {
 
     HttpURLConnection weatherConnection = null;
     InputStream stream = null;
 
-    public void requestWeatherData() {
+    public WeatherDataSource() {
+        super("WeatherDataSource");
+    }
 
-        AsyncWeatherRequest request = new AsyncWeatherRequest();
-        request.execute();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        WeatherDataRequester requester = new WeatherDataRequester();
+        new Thread(requester).start();
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
     }
 
     public void onSensorChanged(String main, String description) {
@@ -45,10 +56,11 @@ public class WeatherDataSource extends Service{
         return null;
     }
 
-    private class AsyncWeatherRequest extends AsyncTask<Object, Object, Void> {
+    private class WeatherDataRequester implements Runnable {
+
 
         @Override
-        protected Void doInBackground(Object... params) {
+        public void run() {
             try {
 
                 String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
@@ -85,7 +97,6 @@ public class WeatherDataSource extends Service{
                 System.out.println("An exception happened: " + e);
                 onSensorChanged(null, null);
             }
-            return null;
         }
     }
 }

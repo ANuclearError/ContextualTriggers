@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
+import com.aidanogrady.contextualtriggers.context.data.WeatherDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +50,12 @@ public class ContextUpdateManager extends Service {
 
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
-        Intent stepCounter = new Intent(this, StepCounter.class);
-        startService(stepCounter);
+      //  Intent stepCounter = new Intent(this, StepCounter.class);
+      //  startService(stepCounter);
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
+        Intent weatherIntent = new Intent(this, WeatherDataSource.class);
+        startService(weatherIntent);
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder();
