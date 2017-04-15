@@ -1,13 +1,10 @@
 package com.aidanogrady.contextualtriggers.context.data;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 
@@ -71,12 +68,11 @@ public class WeatherDataSource extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
     }
 
-    public void onSensorChanged(String main, String description) {
+    public void onSensorChanged(String id) {
 
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Weather");
-        intent.putExtra("Main", main);
-        intent.putExtra("Description", description);
+        intent.putExtra("id", id);
         startService(intent);
 
     }
@@ -126,17 +122,16 @@ public class WeatherDataSource extends IntentService {
 
                 JSONObject jsonObject = new JSONObject(buffer.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("weather");
-                String weather_main = (String) jsonArray.getJSONObject(0).get("main");
-                String weather_desc = (String) jsonArray.getJSONObject(0).get("description");
+                Integer weather_id_int = (Integer) jsonArray.getJSONObject(0).get("id");
+                String weather_id = weather_id_int.toString();
 
-                System.out.println(weather_main);
-                System.out.println(weather_desc);
+                System.out.println(weather_id);
 
-                onSensorChanged(weather_main, weather_desc);
+                onSensorChanged(weather_id);
 
             } catch (Exception e) {
                 System.out.println("An exception happened: " + e);
-                onSensorChanged(null, null);
+                onSensorChanged(null);
             }
         }
     }

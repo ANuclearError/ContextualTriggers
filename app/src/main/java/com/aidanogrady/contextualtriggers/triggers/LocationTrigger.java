@@ -2,14 +2,11 @@ package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
-import android.location.Location;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-
 import com.aidanogrady.contextualtriggers.R;
+import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
-import java.util.Observable;
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * The LocationTrigger triggers in the event that the user's location is within a certain distance
@@ -35,56 +32,49 @@ public class LocationTrigger extends SimpleTrigger {
     private static final double RADIUS_M = 1000;
 
 
-    /**
-     * Constructs a new LocationTrigger.
-     */
-    public LocationTrigger() {
-        super("LocationTrigger");
+    private Context mContext;
+    private ContextHolder mContextHolder;
+
+    LocationTrigger(String name, Context context, ContextHolder holder) {
+        super(name, context, holder);
+        mContext = context;
+        mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser(Context context) {
+    public void notifyUser() {
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
+                new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle("Location Notification")
+                        .setContentText("You're in a place!");
 
         int mNotificationId = 001;
 
 
         NotificationManager mNotifyMgr =
-                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
 // Builds the notification and issues it.
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
     @Override
-    public void checkForContextChange(Context context) {
+    public void checkForContextChange() {
 
-        //check for context
-        notifyUser(context);
-
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-        if (o instanceof Location) {
-            double latitude = ((Location) o).getLatitude();
-            double longitude = ((Location) o).getLongitude();
-
-            float[] res = new float[1];
-            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
-            double dist = res[0];
-
-            if (dist < RADIUS_M) {
-    //            notifyUser(getApplicationContext());
-            }
-        }
-    }
-
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+//        if (o instanceof Location) {
+//            double latitude = ((Location) o).getLatitude();
+//            double longitude = ((Location) o).getLongitude();
+//
+//            float[] res = new float[1];
+//            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
+//            double dist = res[0];
+//
+//            if (dist < RADIUS_M) {
+//                //            notifyUser(getApplicationContext());
+//            }
+//        }
+        notifyUser();
 
     }
+
 }

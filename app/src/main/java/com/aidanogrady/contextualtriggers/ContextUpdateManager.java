@@ -53,7 +53,7 @@ public class ContextUpdateManager extends Service {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakeLock.acquire();
 
-        triggerManager = new TriggerManager(this);
+
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
         Intent stepCounter = new Intent(this, StepCounter.class);
@@ -65,6 +65,7 @@ public class ContextUpdateManager extends Service {
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder();
+        triggerManager = new TriggerManager(this, contextHolder);
 
         setupAlarm();
 
@@ -131,12 +132,8 @@ public class ContextUpdateManager extends Service {
                         }
                         break;
                     case "Weather":
-                        String main = intent.getStringExtra("Main");
-                        String description = intent.getStringExtra("Description");
-
-                        contextHolder.setWeatherMain(main);
-                        contextHolder.setWeatherDescription(description);
-
+                        String id = intent.getStringExtra("id");
+                        contextHolder.setWeatherId(id);
                         break;
                     // add other data sources here
                     // for any dataservice - update context api and invokedService.remove(tag)

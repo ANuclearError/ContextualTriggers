@@ -2,6 +2,8 @@ package com.aidanogrady.contextualtriggers.triggers;
 
 import android.content.Context;
 
+import com.aidanogrady.contextualtriggers.context.ContextHolder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +20,16 @@ public abstract class CompositeTrigger implements Trigger {
      * All triggers that compose this trigger.
      */
     private List<Trigger> mTriggers;
-
+    private Context mContext;
+    private ContextHolder mHolder;
 
     /**
      * Constructs a new CompositeTrigger.
      */
-    public CompositeTrigger() {
+    public CompositeTrigger(Context c, ContextHolder holder) {
+
+        mContext = c;
+        mHolder = holder;
         mTriggers = new ArrayList<>();
     }
 

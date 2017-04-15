@@ -12,7 +12,7 @@ import java.util.Observer;
  * @author Aidan O'Grady
  * @since 0.0
  */
-interface Trigger extends Observer {
+interface Trigger{
     /**
      * Returns the complexity of this trigger.
      *
@@ -24,7 +24,7 @@ interface Trigger extends Observer {
     /**
      * Notify the user when the contextual information indicates this is the best time to do so.
      */
-    void notifyUser(Context context);
+    void notifyUser();
 
-    void checkForContextChange(Context context);
+    void checkForContextChange();
 }
