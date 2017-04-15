@@ -1,6 +1,7 @@
 package com.aidanogrady.contextualtriggers;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import com.aidanogrady.contextualtriggers.context.ContextHolder;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.WeatherDataSource;
+import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,8 @@ public class ContextUpdateManager extends Service {
 
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
+
+    private TriggerManager triggerManager;
 
     private ConnectivityManager connectivityManager;
 
@@ -48,10 +53,11 @@ public class ContextUpdateManager extends Service {
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakeLock.acquire();
 
+        triggerManager = new TriggerManager(this);
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
-        Intent stepCounter = new Intent(this, StepCounter.class);
-        startService(stepCounter);
+    //    Intent stepCounter = new Intent(this, StepCounter.class);
+      //  startService(stepCounter);
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
         Intent weatherIntent = new Intent(this, WeatherDataSource.class);
@@ -71,14 +77,19 @@ public class ContextUpdateManager extends Service {
 
         // set alarm
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-               AlarmManager.INTERVAL_HALF_HOUR, alarmIntent);
+               AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
 
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle bundle = intent.getExtras();
+        Bundle bundle;
 
+        if(intent != null) {
+             bundle = intent.getExtras();
+        }else{
+            bundle = null;
+        }
         if (bundle != null) {
 
             if (intent.hasExtra("DataSource")) {
@@ -108,6 +119,9 @@ public class ContextUpdateManager extends Service {
 
                         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                         if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
+
+                            Intent weatherIntent = new Intent(getApplicationContext(), WeatherDataSource.class);
+                            getApplicationContext().startService(weatherIntent);
                             // should get new location and then call other services from here
                             // invokedServices.add(tag);
                         }
@@ -119,6 +133,10 @@ public class ContextUpdateManager extends Service {
             }
         }
 
+
+        if(triggerManager != null) {
+            triggerManager.update();
+        }
         return START_STICKY;
     }
 

@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Context;
+
 import java.util.Observer;
 
 /**
@@ -15,13 +17,14 @@ interface Trigger extends Observer {
      * Returns the complexity of this trigger.
      *
      * @return the trigger complexity
+     *
      */
     int getComplexity();
 
     /**
      * Notify the user when the contextual information indicates this is the best time to do so.
      */
-    void notifyUser();
+    void notifyUser(Context context);
 
-    void checkForContextChange();
+    void checkForContextChange(Context context);
 }

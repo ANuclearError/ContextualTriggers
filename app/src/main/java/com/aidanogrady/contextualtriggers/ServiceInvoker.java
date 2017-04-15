@@ -19,6 +19,7 @@ public class ServiceInvoker extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        System.out.println("Received Alarm");
         Log.e(TAG, "received alarm");
 
         // invoke services to get data from sources

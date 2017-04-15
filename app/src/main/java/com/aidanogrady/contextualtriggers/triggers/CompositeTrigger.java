@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,8 +1,13 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+
+import com.aidanogrady.contextualtriggers.R;
 
 import java.util.Observable;
 
@@ -37,27 +42,28 @@ public class LocationTrigger extends SimpleTrigger {
         super("LocationTrigger");
     }
 
-    /**
-     * Constructs a new LocationTrigger with the given name.
-     *
-     * @param name  the name of the service
-     */
-    public LocationTrigger(String name) {
-        super(name);
+    @Override
+    public void notifyUser(Context context) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.basic_notification_icon)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+
+        int mNotificationId = 001;
+
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
     @Override
-    public void notifyUser() {
-        Intent intent = new Intent("com.aidanogrady.contextualtriggers.TRIGGER");
-        intent.putExtra("result", "You are inside the radius");
-        sendBroadcast(intent);
-    }
-
-    @Override
-    public void checkForContextChange() {
+    public void checkForContextChange(Context context) {
 
         //check for context
-        notifyUser();
+        notifyUser(context);
 
     }
 
@@ -72,7 +78,7 @@ public class LocationTrigger extends SimpleTrigger {
             double dist = res[0];
 
             if (dist < RADIUS_M) {
-                notifyUser();
+    //            notifyUser(getApplicationContext());
             }
         }
     }

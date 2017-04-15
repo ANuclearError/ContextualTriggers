@@ -1,5 +1,6 @@
 package com.aidanogrady.contextualtriggers.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ public class ContextHolder implements ContextAPI {
     public ContextHolder() {
         // set default values
         this.steps = -1;
-        this.location = null;
+        this.location = new HashMap<>();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.IntentService;
+import android.content.Context;
 
 /**
  * A simple trigger is one that requires a single data source to determine whether or not the user
