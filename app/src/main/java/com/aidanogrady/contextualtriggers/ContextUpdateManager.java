@@ -50,8 +50,8 @@ public class ContextUpdateManager extends Service {
 
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
-      //  Intent stepCounter = new Intent(this, StepCounter.class);
-      //  startService(stepCounter);
+        Intent stepCounter = new Intent(this, StepCounter.class);
+        startService(stepCounter);
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
         Intent weatherIntent = new Intent(this, WeatherDataSource.class);
