@@ -2,6 +2,7 @@ package com.aidanogrady.contextualtriggers.triggers;
 
 import android.content.Context;
 
+import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import java.util.ArrayList;
@@ -21,28 +22,18 @@ public abstract class CompositeTrigger implements Trigger {
      */
     private List<Trigger> mTriggers;
     private Context mContext;
-    private ContextHolder mHolder;
+    private ContextAPI mHolder;
 
     /**
      * Constructs a new CompositeTrigger.
      */
-    public CompositeTrigger(Context c, ContextHolder holder) {
+    CompositeTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
 
+        mTriggers = triggers;
         mContext = c;
         mHolder = holder;
         mTriggers = new ArrayList<>();
     }
-
-
-    /**
-     * Constructs a new CompositeTrigger.
-     *
-     * @param triggers  a list of triggers to add to the composite on construction.
-     */
-    public CompositeTrigger(List<Trigger> triggers) {
-        this.mTriggers = triggers;
-    }
-
 
     @Override
     public int getComplexity() {

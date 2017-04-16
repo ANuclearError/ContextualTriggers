@@ -36,7 +36,7 @@ public class LocationTrigger extends SimpleTrigger {
     private Context mContext;
     private ContextAPI mContextHolder;
 
-    LocationTrigger(String name, Context context, ContextHolder holder) {
+    LocationTrigger(String name, Context context, ContextAPI holder) {
         super(name, context, holder);
         mContext = context;
         mContextHolder = holder;
@@ -60,7 +60,7 @@ public class LocationTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void checkForContextChange() {
+    public void notifyIfTriggered() {
 
 //        if (o instanceof Location) {
 //            double latitude = ((Location) o).getLatitude();
@@ -76,6 +76,11 @@ public class LocationTrigger extends SimpleTrigger {
 //        }
         notifyUser();
 
+    }
+
+    @Override
+    public Boolean isTriggered() {
+        return true;
     }
 
 }

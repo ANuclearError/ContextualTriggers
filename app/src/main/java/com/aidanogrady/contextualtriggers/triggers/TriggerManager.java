@@ -3,7 +3,6 @@ package com.aidanogrady.contextualtriggers.triggers;
 import android.content.Context;
 
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
-import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +13,29 @@ public class TriggerManager {
     private Context mContext;
     private ContextAPI mContextHolder;
 
-    public TriggerManager(Context c, ContextHolder holder){
+    public TriggerManager(Context c, ContextAPI holder){
         mContext = c;
         mContextHolder = holder;
         mTriggers = new ArrayList<>();
 
+        Trigger locationTrigger = new LocationTrigger("LocationTrigger", mContext, mContextHolder);
+        Trigger weatherTrigger = new WeatherTrigger("WeatherTrigger", mContext, mContextHolder);
+
+        List<Trigger> weatherLocationList = new ArrayList<>();
+        weatherLocationList.add(locationTrigger);
+        weatherLocationList.add(weatherTrigger);
+
+        Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContext, mContextHolder);
+
         //Triggers
-        mTriggers.add(new LocationTrigger("LocationTrigger", mContext, holder));
-        mTriggers.add(new WeatherTrigger("WeatherTrigger", mContext, holder));
+        mTriggers.add(locationTrigger);
+        mTriggers.add(weatherTrigger);
+        mTriggers.add(weatherLocationComposite);
     }
 
     public void update(){
         for(Trigger t: mTriggers){
-            t.checkForContextChange();
+            t.notifyIfTriggered();
         }
     }
 

@@ -3,6 +3,7 @@ package com.aidanogrady.contextualtriggers.triggers;
 import android.app.IntentService;
 import android.content.Context;
 
+import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 /**
@@ -18,7 +19,7 @@ public abstract class SimpleTrigger implements Trigger {
      *
      * @param name  the name of the service for this trigger.
      */
-    public SimpleTrigger(String name, Context context, ContextHolder holder) {
+    public SimpleTrigger(String name, Context context, ContextAPI holder) {
     }
 
     @Override

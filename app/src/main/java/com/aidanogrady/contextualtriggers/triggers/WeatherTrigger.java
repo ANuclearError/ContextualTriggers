@@ -27,7 +27,7 @@ public class WeatherTrigger extends SimpleTrigger {
     private String mNotificationTitle;
     private String mNotificationMessage;
 
-    public WeatherTrigger(String name, Context context, ContextHolder holder) {
+    public WeatherTrigger(String name, Context context, ContextAPI holder) {
         super(name, context, holder);
         mContext = context;
         mContextHolder = holder;
@@ -47,74 +47,90 @@ public class WeatherTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void checkForContextChange() {
+    public void notifyIfTriggered() {
 
         String id = mContextHolder.getWeatherId();
 
         if(id != null){
-            handleWeatherInfo(id);
+            if(handleWeatherInfo(id)){
+                notifyUser();
+            }
         }
 
     }
 
-    private void handleWeatherInfo(String id){
+    @Override
+    public Boolean isTriggered() {
+        String id = mContextHolder.getWeatherId();
+
+        if(id != null){
+            if(handleWeatherInfo(id)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param id
+     * Codes based on: https://openweathermap.org/weather-conditions
+     */
+
+    private boolean handleWeatherInfo(String id){
+
+        boolean isTriggered = true;
 
         switch (id){
 
             case "800":
                 mNotificationTitle = "Clear Skies!";
                 mNotificationMessage = "The weather is clear right now, perfect for getting active!";
-                notifyUser();
                 break;
             case "801":
                 mNotificationTitle = "Barely cloudy!";
                 mNotificationMessage = "The weather is pretty clear right now, great for getting active!";
-                notifyUser();
                 break;
             case "802":
                 mNotificationTitle = "A touch of cloud";
                 mNotificationMessage = "The weather is only a little cloudy, good for getting active!";
-                notifyUser();
                 break;
             case "803":
                 mNotificationTitle = "A bit cloudy";
                 mNotificationMessage = "Some broken clouds won't stop you, why not get active?";
-                notifyUser();
                 break;
             case "904":
                 mNotificationTitle = "Scorchio!";
                 mNotificationMessage = "It's roasting today! Why not put on some sunscreen and get moving!";
-                notifyUser();
                 break;
             case "951":
                 mNotificationTitle = "Nice and calm";
                 mNotificationMessage = "The weather is lovely right now, great for getting active!";
-                notifyUser();
                 break;
             case "952":
                 mNotificationTitle = "Light and breezy";
                 mNotificationMessage = "The weather is light and breezy right now, great for getting active!";
-                notifyUser();
                 break;
             case "953":
                 mNotificationTitle = "Gentle breeze";
                 mNotificationMessage = "The weather is gentle and breezy right now, great for getting active!";
-                notifyUser();
                 break;
             case "954":
                 mNotificationTitle = "A little breezy";
                 mNotificationMessage = "The weather is only a little breezy right now, great for getting active!";
-                notifyUser();
                 break;
             case "955":
                 mNotificationTitle = "A nice, fresh breeze";
                 mNotificationMessage = "There's a fresh breeze right now, great for getting active!";
-                notifyUser();
+                break;
+            case "521":
+                mNotificationTitle = "It's rainy! (Debug)";
+                mNotificationMessage = "The weather isn't nice but I need to test this app!";
                 break;
 
-            default:
+            default: isTriggered = false;
         }
 
-
+        return isTriggered;
     }
 }

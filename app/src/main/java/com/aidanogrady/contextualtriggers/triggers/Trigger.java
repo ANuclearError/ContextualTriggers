@@ -26,5 +26,7 @@ interface Trigger{
      */
     void notifyUser();
 
-    void checkForContextChange();
+    void notifyIfTriggered();
+
+    Boolean isTriggered();
 }
