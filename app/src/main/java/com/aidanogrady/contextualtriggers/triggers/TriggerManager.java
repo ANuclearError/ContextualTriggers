@@ -2,6 +2,7 @@ package com.aidanogrady.contextualtriggers.triggers;
 
 import android.content.Context;
 
+import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class TriggerManager {
 
     private List<Trigger> mTriggers;
     private Context mContext;
-    private ContextHolder mContextHolder;
+    private ContextAPI mContextHolder;
 
     public TriggerManager(Context c, ContextHolder holder){
         mContext = c;

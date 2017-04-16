@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 
 import com.aidanogrady.contextualtriggers.R;
+import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -22,7 +23,7 @@ public class WeatherTrigger extends SimpleTrigger {
      */
 
     private Context mContext;
-    private ContextHolder mContextHolder;
+    private ContextAPI mContextHolder;
     private String mNotificationTitle;
     private String mNotificationMessage;
 

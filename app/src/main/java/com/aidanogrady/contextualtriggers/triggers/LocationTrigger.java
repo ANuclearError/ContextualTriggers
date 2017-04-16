@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import com.aidanogrady.contextualtriggers.R;
+import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -33,7 +34,7 @@ public class LocationTrigger extends SimpleTrigger {
 
 
     private Context mContext;
-    private ContextHolder mContextHolder;
+    private ContextAPI mContextHolder;
 
     LocationTrigger(String name, Context context, ContextHolder holder) {
         super(name, context, holder);
