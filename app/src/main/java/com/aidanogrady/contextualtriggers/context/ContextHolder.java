@@ -1,5 +1,9 @@
 package com.aidanogrady.contextualtriggers.context;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +52,18 @@ public class ContextHolder implements ContextAPI {
 
     public void setWeatherId(String id){
         weatherId = id;
+    }
+
+    public Date getCurrentTime() throws ParseException {
+
+        Calendar currentCal = Calendar.getInstance();
+        String currentTimeStr = new SimpleDateFormat("HH:mm:ss").format(currentCal.getTime());
+        Date currentTime = new SimpleDateFormat("HH:mm:ss").parse(currentTimeStr);
+        currentCal.setTime(currentTime);
+        currentCal.add(Calendar.DATE, 1);
+
+        return currentCal.getTime();
+
     }
 
 }

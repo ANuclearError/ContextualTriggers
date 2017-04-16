@@ -5,7 +5,9 @@ import android.content.Context;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TriggerManager {
 
@@ -27,7 +29,19 @@ public class TriggerManager {
 
         Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContext, mContextHolder);
 
+
+        List<Map<String, String>> timeList = new ArrayList<Map<String,String>>();
+        Map<String,String> range_1 = new HashMap<>();
+        range_1.put("from", "22:00:00");
+        range_1.put("to", "23:59:00");
+        timeList.add(range_1);
+
+        Trigger timeRangeTrigger = new TimeRangeTrigger("TimeRangeTrigger", mContext, mContextHolder, timeList);
+
+
+
         //Triggers
+        mTriggers.add(timeRangeTrigger);
         mTriggers.add(locationTrigger);
         mTriggers.add(weatherTrigger);
         mTriggers.add(weatherLocationComposite);

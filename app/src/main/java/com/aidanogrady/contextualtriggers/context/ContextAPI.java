@@ -1,6 +1,8 @@
 package com.aidanogrady.contextualtriggers.context;
 
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -14,5 +16,7 @@ public interface ContextAPI  {
     int getSteps();
 
     String getWeatherId();
+
+    Date getCurrentTime() throws ParseException;
 
 }
