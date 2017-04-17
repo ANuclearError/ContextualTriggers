@@ -1,6 +1,8 @@
 package com.aidanogrady.contextualtriggers.context;
 
 
+import android.content.Context;
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -18,5 +20,7 @@ public interface ContextAPI  {
     String getWeatherId();
 
     Date getCurrentTime() throws ParseException;
+
+    int getBatteryLevel(Context context);
 
 }

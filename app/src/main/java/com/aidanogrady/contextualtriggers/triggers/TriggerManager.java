@@ -37,10 +37,11 @@ public class TriggerManager {
         timeList.add(range_1);
 
         Trigger timeRangeTrigger = new TimeRangeTrigger("TimeRangeTrigger", mContext, mContextHolder, timeList);
-
+        Trigger batteryTrigger = new BatteryTrigger("BatteryTrigger", mContext, mContextHolder, 75);
 
 
         //Triggers
+        mTriggers.add(batteryTrigger);
         mTriggers.add(timeRangeTrigger);
         mTriggers.add(locationTrigger);
         mTriggers.add(weatherTrigger);

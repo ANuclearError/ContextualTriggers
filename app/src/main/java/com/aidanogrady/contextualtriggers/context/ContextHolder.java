@@ -1,11 +1,16 @@
 package com.aidanogrady.contextualtriggers.context;
 
+import android.content.Context;
+import android.os.BatteryManager;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.Context.BATTERY_SERVICE;
 
 /**
  * Created by ASUS on 15/04/2017.
@@ -64,6 +69,16 @@ public class ContextHolder implements ContextAPI {
 
         return currentCal.getTime();
 
+    }
+
+    public int getBatteryLevel(Context context){
+
+        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
+        int batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        System.out.println("BATTERY LEVEL: " + batteryLevel);
+
+        return batteryLevel;
     }
 
 }

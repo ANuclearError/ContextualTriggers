@@ -74,6 +74,7 @@ public class LocationTrigger extends SimpleTrigger {
 //                //            notifyUser(getApplicationContext());
 //            }
 //        }
+
         notifyUser();
 
     }
