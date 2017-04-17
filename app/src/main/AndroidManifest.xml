@@ -41,6 +41,7 @@
             android:process=":my_process"/>
         <service android:name=".context.data.LocationDataSource" />
         <service android:name=".context.data.WeatherDataSource" />
+        <service android:name=".context.data.FoursquareDataSource"/>
     </application>
 
 </manifest>

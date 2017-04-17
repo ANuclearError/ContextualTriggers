@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.WeatherDataSource;
@@ -62,6 +63,8 @@ public class ContextUpdateManager extends Service {
         startService(locationIntent);
         Intent weatherIntent = new Intent(this, WeatherDataSource.class);
         startService(weatherIntent);
+        Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
+        startService(foursquareIntent);
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder();
@@ -127,6 +130,11 @@ public class ContextUpdateManager extends Service {
                             weatherIntent.putExtra("Latitude", latitude);
                             weatherIntent.putExtra("Longitude", longitude);
                             startService(weatherIntent);
+
+                            Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
+                            foursquareIntent.putExtra("Latitude", latitude);
+                            foursquareIntent.putExtra("Longitude", longitude);
+                            startService(foursquareIntent);
                             // should get new location and then call other services from here
                             // invokedServices.add(tag);
                         }
@@ -135,6 +143,9 @@ public class ContextUpdateManager extends Service {
                         String id = intent.getStringExtra("id");
                         contextHolder.setWeatherId(id);
                         break;
+                    case "Foursquare":
+                        String nearby = intent.getStringExtra("nearby");
+                        contextHolder.setNearbyFoursquareData(nearby);
                     // add other data sources here
                     // for any dataservice - update context api and invokedService.remove(tag)
                     // if set empty - notify trigger manager

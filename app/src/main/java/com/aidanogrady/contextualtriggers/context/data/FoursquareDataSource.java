@@ -18,13 +18,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class WeatherDataSource extends IntentService {
+public class FoursquareDataSource extends IntentService {
 
-    HttpURLConnection weatherConnection = null;
+    HttpURLConnection foursquareConnection = null;
     InputStream stream = null;
 
-    public WeatherDataSource() {
-        super("WeatherDataSource");
+    public FoursquareDataSource() {
+        super("FoursquareDataSource");
     }
 
 //    @Override
@@ -56,7 +56,7 @@ public class WeatherDataSource extends IntentService {
                 String str_lat = Double.toString(latitude);
                 String str_lon = Double.toString(longitude);
 
-                WeatherDataRequester requester = new WeatherDataRequester(str_lat, str_lon);
+                FoursquareDataRequester requester = new FoursquareDataRequester(str_lat, str_lon);
                 new Thread(requester).start();
 
             }
@@ -68,11 +68,15 @@ public class WeatherDataSource extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
     }
 
-    public void onSensorChanged(String id) {
+    public void onSensorChanged(String nearby) {
+
+        if(nearby == null){
+            return;
+        }
 
         Intent intent = new Intent(this, ContextUpdateManager.class);
-        intent.putExtra("DataSource", "Weather");
-        intent.putExtra("id", id);
+        intent.putExtra("DataSource", "Foursquare");
+        intent.putExtra("nearby", nearby);
         startService(intent);
 
     }
@@ -83,13 +87,17 @@ public class WeatherDataSource extends IntentService {
         return null;
     }
 
-    private class WeatherDataRequester implements Runnable {
+    private class FoursquareDataRequester implements Runnable {
 
         String latitude;
         String longitude;
-        String app_id = "72fea7c50a5622a959485e2731ce1f71";
+        String client_id = "V5OSSBX1OM1NHPMXR5KOGZLFNX3UXWPHSUNRRVY2WLHBK05J";
+        String client_secret = "QP0JSTHIPVDJLT4NP5RKPYI4OGTELJ2SUXSBMX0VLC4PT4NY";
+        String version = "20170417";
+        String parkCategories = "4bf58dd8d48988d163941735,52e81612bcbc57f1066b7a21";
+        String radius = "500";
 
-        WeatherDataRequester(String lat, String lng){
+        FoursquareDataRequester(String lat, String lng){
             latitude = lat;
             longitude = lng;
         }
@@ -99,35 +107,39 @@ public class WeatherDataSource extends IntentService {
         public void run() {
             try {
 
-                String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
-                String PARAMS = "lat=" + latitude + "&lon=" + longitude +"&APPID=" + app_id;
+                String BASE_URL = "https://api.foursquare.com/v2/venues/search?";
+                String PARAMS = String.format(
+                        "ll=%s,%s&client_id=%s&client_secret=%s&v=%s&categoryId=%s&radius=%s",
+                        latitude,
+                        longitude,
+                        client_id,
+                        client_secret,
+                        version,
+                        parkCategories,
+                        radius
+                );
 
 
-                weatherConnection = (HttpURLConnection) (new URL(BASE_URL + PARAMS)).openConnection();
-                weatherConnection.setRequestMethod("GET");
-                weatherConnection.setDoInput(true);
-                weatherConnection.setDoOutput(true);
-                weatherConnection.connect();
+                foursquareConnection = (HttpURLConnection) (new URL(BASE_URL + PARAMS)).openConnection();
+                foursquareConnection.setRequestMethod("GET");
+                foursquareConnection.setDoInput(true);
+                foursquareConnection.setDoOutput(true);
+                foursquareConnection.connect();
 
 
                 StringBuilder buffer = new StringBuilder();
-                stream = weatherConnection.getInputStream();
+                stream = foursquareConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(stream));
                 String line;
                 while ((line = br.readLine()) != null)
                     buffer.append(line).append("rn");
 
                 stream.close();
-                weatherConnection.disconnect();
+                foursquareConnection.disconnect();
 
-                JSONObject jsonObject = new JSONObject(buffer.toString());
-                JSONArray jsonArray = jsonObject.getJSONArray("weather");
-                Integer weather_id_int = (Integer) jsonArray.getJSONObject(0).get("id");
-                String weather_id = weather_id_int.toString();
-
-                System.out.println(weather_id);
-
-                onSensorChanged(weather_id);
+                String nearbyLocationsString = buffer.toString();
+                System.out.println(nearbyLocationsString);
+                onSensorChanged(nearbyLocationsString);
 
             } catch (Exception e) {
                 System.out.println("An exception happened: " + e);

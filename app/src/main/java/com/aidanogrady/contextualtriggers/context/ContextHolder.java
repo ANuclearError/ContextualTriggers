@@ -22,6 +22,7 @@ public class ContextHolder implements ContextAPI {
     private Map<String, Double> location;
     private String weatherMain;
     private String weatherId;
+    private String nearbyFoursquareData;
 
     public ContextHolder() {
         // set default values
@@ -81,4 +82,11 @@ public class ContextHolder implements ContextAPI {
         return batteryLevel;
     }
 
+    public void setNearbyFoursquareData(String nearby) {
+        nearbyFoursquareData = nearby;
+    }
+
+    public String getNearbyFoursquareData(){
+        return nearbyFoursquareData;
+    }
 }

@@ -38,6 +38,7 @@ public class TriggerManager {
 
         Trigger timeRangeTrigger = new TimeRangeTrigger("TimeRangeTrigger", mContext, mContextHolder, timeList);
         Trigger batteryTrigger = new BatteryTrigger("BatteryTrigger", mContext, mContextHolder, 75);
+        Trigger foursquareTrigger = new FoursquareTrigger("FoursquareTrigger", mContext, mContextHolder);
 
 
         //Triggers
@@ -46,6 +47,7 @@ public class TriggerManager {
         mTriggers.add(locationTrigger);
         mTriggers.add(weatherTrigger);
         mTriggers.add(weatherLocationComposite);
+        mTriggers.add(foursquareTrigger);
     }
 
     public void update(){

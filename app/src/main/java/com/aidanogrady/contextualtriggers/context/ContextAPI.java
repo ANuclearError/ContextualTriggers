@@ -23,4 +23,6 @@ public interface ContextAPI  {
 
     int getBatteryLevel(Context context);
 
+    String getNearbyFoursquareData();
+
 }
