@@ -25,4 +25,5 @@ public interface ContextAPI  {
 
     String getNearbyFoursquareData();
 
+
 }

@@ -1,10 +1,8 @@
 package com.aidanogrady.contextualtriggers.context.data;
 
-import android.location.Location;
-
-import com.google.android.gms.location.LocationListener;
-
-import java.util.Observable;
+import android.app.IntentService;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 
 
 /**
@@ -14,10 +12,14 @@ import java.util.Observable;
  * @author Aidan O'Grady
  * @since 0.0.1
  */
-public class PlacesDataSource extends Observable implements LocationListener {
+public class PlacesDataSource extends IntentService {
+
+    public PlacesDataSource(String name) {
+        super(name);
+    }
 
     @Override
-    public void onLocationChanged(Location location) {
+    protected void onHandleIntent(@Nullable Intent intent) {
 
     }
 }
