@@ -20,6 +20,7 @@ import java.net.URL;
 
 public class WeatherDataSource extends IntentService {
 
+    public static final String TAG = "weatherDS";
     HttpURLConnection weatherConnection = null;
     InputStream stream = null;
 

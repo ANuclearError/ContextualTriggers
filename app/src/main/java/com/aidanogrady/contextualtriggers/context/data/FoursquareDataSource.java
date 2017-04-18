@@ -20,6 +20,8 @@ import java.net.URL;
 
 public class FoursquareDataSource extends IntentService {
 
+    public static final String TAG = "foursquareDS";
+
     HttpURLConnection foursquareConnection = null;
     InputStream stream = null;
 

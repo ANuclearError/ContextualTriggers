@@ -125,7 +125,6 @@ public class ContextUpdateManager extends Service {
                         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                         if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
 
-
                             Intent weatherIntent = new Intent(this, WeatherDataSource.class);
                             weatherIntent.putExtra("Latitude", latitude);
                             weatherIntent.putExtra("Longitude", longitude);
@@ -135,22 +134,25 @@ public class ContextUpdateManager extends Service {
                             foursquareIntent.putExtra("Latitude", latitude);
                             foursquareIntent.putExtra("Longitude", longitude);
                             startService(foursquareIntent);
-                            // should get new location and then call other services from here
-                            // invokedServices.add(tag);
+                            // add tags of any invoked services here
+                            invokedServices.add(WeatherDataSource.TAG);
+                            invokedServices.add(FoursquareDataSource.TAG);
                         }
                         break;
                     case "Weather":
                         String id = intent.getStringExtra("id");
                         contextHolder.setWeatherId(id);
+                        invokedServices.remove(WeatherDataSource.TAG);
                         break;
                     case "Foursquare":
                         String nearby = intent.getStringExtra("nearby");
                         contextHolder.setNearbyFoursquareData(nearby);
+                        invokedServices.remove(FoursquareDataSource.TAG);
                     // add other data sources here
-                    // for any dataservice - update context api and invokedService.remove(tag)
+                    // for any dataservice - update context api and add invokedService.remove(tag)
                     // if set empty - notify trigger manager
                 }
-                if(triggerManager != null) {
+                if(triggerManager != null && invokedServices.isEmpty()) {
                     triggerManager.update();
                 }
             }
