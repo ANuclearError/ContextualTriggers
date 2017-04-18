@@ -21,11 +21,13 @@ public class TriggerManager {
         mTriggers = new ArrayList<>();
 
         Trigger locationTrigger = new LocationTrigger("LocationTrigger", mContext, mContextHolder);
-        Trigger weatherTrigger = new WeatherTrigger("WeatherTrigger", mContext, mContextHolder);
+        String[] goodWeatherCodeList = new String[]{"800","801","802","803","904","951","952","953","954","955"};
+        Trigger componentWeatherTrigger = new WeatherTrigger("ComponentWeatherTrigger", mContext, mContextHolder, goodWeatherCodeList);
+        Trigger goodWeatherTrigger = new WeatherTrigger("GoodWeatherTrigger", mContext, mContextHolder, goodWeatherCodeList);
 
         List<Trigger> weatherLocationList = new ArrayList<>();
         weatherLocationList.add(locationTrigger);
-        weatherLocationList.add(weatherTrigger);
+        weatherLocationList.add(componentWeatherTrigger);
 
         Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContext, mContextHolder);
 
@@ -45,9 +47,10 @@ public class TriggerManager {
         mTriggers.add(batteryTrigger);
         mTriggers.add(timeRangeTrigger);
         mTriggers.add(locationTrigger);
-        mTriggers.add(weatherTrigger);
+        mTriggers.add(componentWeatherTrigger);
         mTriggers.add(weatherLocationComposite);
         mTriggers.add(foursquareTrigger);
+        mTriggers.add(goodWeatherTrigger);
     }
 
     public void update(){
