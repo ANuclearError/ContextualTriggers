@@ -116,29 +116,31 @@ public class ContextUpdateManager extends Service {
                         }
                         break;
                     case "Location":
-                        double latitude = intent.getDoubleExtra("Latitude", 0.0);
-                        double longitude = intent.getDoubleExtra("Longitude", 0.0);
+                        if (invokedServices.isEmpty()) {
+                            double latitude = intent.getDoubleExtra("Latitude", 0.0);
+                            double longitude = intent.getDoubleExtra("Longitude", 0.0);
 
-                        contextHolder.setLocation(latitude, longitude);
-                        Toast.makeText(getApplicationContext(),
-                                ("Received: Lat " + latitude + "Long "+ longitude),
-                                Toast.LENGTH_LONG).show();
+                            contextHolder.setLocation(latitude, longitude);
+                            Toast.makeText(getApplicationContext(),
+                                    ("Received: Lat " + latitude + "Long "+ longitude),
+                                    Toast.LENGTH_LONG).show();
 
-                        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-                        if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
+                            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                            if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
 
-                            Intent weatherIntent = new Intent(this, WeatherDataSource.class);
-                            weatherIntent.putExtra("Latitude", latitude);
-                            weatherIntent.putExtra("Longitude", longitude);
-                            startService(weatherIntent);
+                                Intent weatherIntent = new Intent(this, WeatherDataSource.class);
+                                weatherIntent.putExtra("Latitude", latitude);
+                                weatherIntent.putExtra("Longitude", longitude);
+                                startService(weatherIntent);
 
-                            Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
-                            foursquareIntent.putExtra("Latitude", latitude);
-                            foursquareIntent.putExtra("Longitude", longitude);
-                            startService(foursquareIntent);
-                            // add tags of any invoked services here
-                            invokedServices.add(WeatherDataSource.TAG);
-                            invokedServices.add(FoursquareDataSource.TAG);
+                                Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
+                                foursquareIntent.putExtra("Latitude", latitude);
+                                foursquareIntent.putExtra("Longitude", longitude);
+                                startService(foursquareIntent);
+                                // add tags of any invoked services here
+                                invokedServices.add(WeatherDataSource.TAG);
+                                invokedServices.add(FoursquareDataSource.TAG);
+                            }
                         }
                         break;
                     case "Weather":

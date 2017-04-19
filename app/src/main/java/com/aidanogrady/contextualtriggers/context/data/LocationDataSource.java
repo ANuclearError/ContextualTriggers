@@ -37,9 +37,9 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private static final String TAG = "LocationDS";
 
-    private static final long UPDATE_INTERVAL = 5 * 1000; // 35 * 60 * 1000
+    private static final long UPDATE_INTERVAL = 15 * 1000; // 35 * 60 * 1000
 
-    private static final long FASTEST_INTERVAL = 1 * 1000; // 30 * 60 * 1000
+    private static final long FASTEST_INTERVAL = 15 * 1000; // 30 * 60 * 1000
 
     private static final long MAX_WAIT_TIME = 5 * UPDATE_INTERVAL;
 
@@ -67,10 +67,11 @@ public class LocationDataSource extends IntentService implements LocationListene
         System.out.println("Creating location data source service");
         mRequestInProgress = false;
 
-        mLocationRequest = LocationRequest.create();
+//        mLocationRequest = LocationRequest.create();
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setMaxWaitTime(MAX_WAIT_TIME);
 
         mIsServicesAvailable = isServicesConnected();
