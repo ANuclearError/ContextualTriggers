@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
  * near the user.
  *
  * @author Aidan O'Grady
- * @since 0.0.1
  */
 public class PlacesDataSource extends IntentService {
 

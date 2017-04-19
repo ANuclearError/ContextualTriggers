@@ -4,12 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * TODO: Class desc
+ * A basic object for storing information on a calendar event in the user's calendar.
  *
  * @author Aidan O'Grady
- * @since TODO: Version
  */
-public class CalendarEvent implements Parcelable {
+class CalendarEvent implements Parcelable {
     /**
      * The location of the event.
      */
@@ -32,12 +31,10 @@ public class CalendarEvent implements Parcelable {
         }
     };
 
-    public CalendarEvent(Parcel in) {
+    private CalendarEvent(Parcel in) {
         mLocation = in.readString();
         mStartTime = in.readLong();
     }
-
-    public CalendarEvent(S)
 
     @Override
     public int describeContents() {

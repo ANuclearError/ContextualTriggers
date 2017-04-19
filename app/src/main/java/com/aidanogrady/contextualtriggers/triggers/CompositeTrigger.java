@@ -3,7 +3,6 @@ package com.aidanogrady.contextualtriggers.triggers;
 import android.content.Context;
 
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
-import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +13,8 @@ import java.util.List;
  * prompt should be sent.
  *
  * @author Aidan O'Grady
- * @since 0.0
  */
-public abstract class CompositeTrigger implements Trigger {
+abstract class CompositeTrigger implements Trigger {
     /**
      * All triggers that compose this trigger.
      */

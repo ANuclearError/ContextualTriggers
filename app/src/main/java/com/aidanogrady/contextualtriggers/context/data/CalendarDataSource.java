@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcel;
 import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.Pair;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 import com.aidanogrady.contextualtriggers.R;
@@ -20,14 +20,12 @@ import com.permissioneverywhere.PermissionResultCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * The CalendarDataSource provides information on the user's calendar. Triggers will be able to
  * decide on how to use this calendar information.
  *
  * @author Aidan O'Grady
- * @since 0.2
  */
 public class CalendarDataSource extends IntentService implements PermissionResultCallback {
     public static final String[] EVENT_PROJECTION = new String[] {
@@ -38,6 +36,9 @@ public class CalendarDataSource extends IntentService implements PermissionResul
     private static final int EVENT_LOCATION_INDEX = 0;
 
     private static final int EVENT_DTSTART_INDEX = 1;
+
+    private static final String TODAY =
+            "com.aidanogrady.contextualtriggers.context.data.CalendarEvent.Today";
 
 
     public CalendarDataSource(String name) {
@@ -92,7 +93,7 @@ public class CalendarDataSource extends IntentService implements PermissionResul
         boolean write = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED;
 
-        List<CalendarEvent> results = new ArrayList<>();
+        ArrayList<CalendarEvent> results = new ArrayList<>();
         if (read && write) {
             Cursor cur = cr.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
 
@@ -103,7 +104,11 @@ public class CalendarDataSource extends IntentService implements PermissionResul
 
                     location = cur.getString(EVENT_LOCATION_INDEX);
                     dtstart = cur.getLong(EVENT_DTSTART_INDEX);
-                    results.add(new CalendarEvent());
+                    Parcel parcel = Parcel.obtain();
+                    parcel.writeString(location);
+                    parcel.writeLong(dtstart);
+                    results.add(CalendarEvent.CREATOR.createFromParcel(parcel));
+                    parcel.recycle();
                 }
 
                 cur.close();
@@ -112,7 +117,7 @@ public class CalendarDataSource extends IntentService implements PermissionResul
 
         intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Calendar");
-        intent.putParcelableArrayListExtra()
+        intent.putParcelableArrayListExtra(TODAY, results);
         startService(intent);
 
     }
