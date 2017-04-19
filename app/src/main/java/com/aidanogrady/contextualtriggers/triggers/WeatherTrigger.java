@@ -26,11 +26,13 @@ public class WeatherTrigger extends SimpleTrigger {
     private ContextAPI mContextHolder;
     private String mNotificationTitle;
     private String mNotificationMessage;
+    private String[] mIdList;
 
-    public WeatherTrigger(String name, Context context, ContextAPI holder) {
+    public WeatherTrigger(String name, Context context, ContextAPI holder, String[] id_list) {
         super(name, context, holder);
         mContext = context;
         mContextHolder = holder;
+        mIdList = id_list;
     }
 
     @Override
@@ -50,10 +52,15 @@ public class WeatherTrigger extends SimpleTrigger {
     public void notifyIfTriggered() {
 
         String id = mContextHolder.getWeatherId();
-
+        System.out.println("WEATHER ID: " + id);
         if(id != null){
-            if(handleWeatherInfo(id)){
-                notifyUser();
+
+            for (String mId : mIdList) {
+                if (id.equals(mId)) {
+                    if(handleWeatherInfo(id)){
+                        notifyUser();
+                    }
+                }
             }
         }
 
@@ -64,10 +71,14 @@ public class WeatherTrigger extends SimpleTrigger {
         String id = mContextHolder.getWeatherId();
 
         if(id != null){
-            if(handleWeatherInfo(id)){
-                return true;
+
+            for (String mId : mIdList) {
+                if (id.equals(mId)) {
+                    return handleWeatherInfo(id);
+                }
             }
         }
+
         return false;
     }
 
@@ -129,6 +140,27 @@ public class WeatherTrigger extends SimpleTrigger {
                 break;
 
             default: isTriggered = false;
+        }
+
+        if(id.charAt(0) == '2'){
+            mNotificationTitle = "Thunderstorms!";
+            mNotificationMessage = "You should probably exercise indoors today!";
+            isTriggered = true;
+        }
+        if(id.charAt(0) == '3'){
+            mNotificationTitle = "Drizzle!";
+            mNotificationMessage = "You should probably exercise indoors today!";
+            isTriggered = true;
+        }
+        if(id.charAt(0) == '5'){
+            mNotificationTitle = "Rain!";
+            mNotificationMessage = "You should probably exercise indoors today!";
+            isTriggered = true;
+        }
+        if(id.charAt(0) == '6'){
+            mNotificationTitle = "Snow!";
+            mNotificationMessage = "You should probably exercise indoors today!";
+            isTriggered = true;
         }
 
         return isTriggered;

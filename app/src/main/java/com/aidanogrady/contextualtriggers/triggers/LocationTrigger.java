@@ -3,9 +3,9 @@ package com.aidanogrady.contextualtriggers.triggers;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
+
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
-import com.aidanogrady.contextualtriggers.context.ContextHolder;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -14,7 +14,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * of a building.
  *
  * @author Aidan O'Grady
- * @since 0.0.1
  */
 public class LocationTrigger extends SimpleTrigger {
     /**

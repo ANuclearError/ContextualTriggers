@@ -29,7 +29,6 @@ import com.permissioneverywhere.PermissionResultCallback;
  * notifying concerned triggers.
  *
  * @author Aidan O'Grady
- * @since 0.0.1
  */
 public class LocationDataSource extends IntentService implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,

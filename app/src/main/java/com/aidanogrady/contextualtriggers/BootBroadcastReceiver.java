@@ -11,7 +11,6 @@ import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
  * The BootBroadcastReceiver handles starting up the framework's services when the device is booted.
  *
  * @author Aidan O'Grady
- * @since 0.1
  */
 public class BootBroadcastReceiver extends BroadcastReceiver {
 
