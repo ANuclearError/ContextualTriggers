@@ -83,11 +83,20 @@ public class FoursquareTrigger extends SimpleTrigger {
 
             if(jsonArray.length() != 0){
 
-                JSONObject parkObject = jsonArray.getJSONObject(0);
-                String name = parkObject.getString("name");
-                mNotificationTitle = "Great location nearby!";
-                mNotificationMessage = String.format("You're near a park! Perfect for a run!",name);
-                return true;
+                for(int i = 0; i < jsonArray.length(); i++){
+                    JSONObject parkObject = jsonArray.getJSONObject(i);
+                    String name = parkObject.getString("name");
+                    JSONObject statsObject = parkObject.getJSONObject("stats");
+                    int checkIns = statsObject.getInt("checkinsCount");
+
+                    if(checkIns >= 100) {
+                        mNotificationTitle = "Great location nearby!";
+                        mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             return false;
