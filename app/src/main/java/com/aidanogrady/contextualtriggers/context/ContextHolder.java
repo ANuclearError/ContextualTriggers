@@ -1,6 +1,8 @@
 package com.aidanogrady.contextualtriggers.context;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.BatteryManager;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
@@ -78,13 +80,24 @@ public class ContextHolder implements ContextAPI {
     }
 
     public int getBatteryLevel(Context context){
+//        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
+//        int batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+//
+//        System.out.println("BATTERY LEVEL: " + batteryLevel);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
 
-        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
-        int batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+        if (batteryStatus != null) {
 
-        System.out.println("BATTERY LEVEL: " + batteryLevel);
+            int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale  = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-        return batteryLevel;
+            float batteryPct = (level / (float)scale) * 100;
+            System.out.println("BATTERY LEVEL:" + batteryPct);
+            return (int) batteryPct;
+        }else{
+            return -1;
+        }
     }
 
     public void setNearbyFoursquareData(String nearby) {
