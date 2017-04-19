@@ -3,8 +3,11 @@ package com.aidanogrady.contextualtriggers.context;
 
 import android.content.Context;
 
+import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
+
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,5 +28,7 @@ public interface ContextAPI  {
 
     String getNearbyFoursquareData();
 
+    List<CalendarEvent> getTodaysEvents();
 
+    void setTodaysEvents(List<CalendarEvent> events);
 }

@@ -28,6 +28,8 @@ import java.util.Calendar;
  * @author Aidan O'Grady
  */
 public class CalendarDataSource extends IntentService implements PermissionResultCallback {
+    public static final String TAG = "calendar";
+
     public static final String[] EVENT_PROJECTION = new String[] {
             CalendarContract.Events.EVENT_LOCATION,
             CalendarContract.Events.DTSTART
@@ -36,9 +38,6 @@ public class CalendarDataSource extends IntentService implements PermissionResul
     private static final int EVENT_LOCATION_INDEX = 0;
 
     private static final int EVENT_DTSTART_INDEX = 1;
-
-    private static final String TODAY =
-            "com.aidanogrady.contextualtriggers.context.data.CalendarEvent.Today";
 
 
     public CalendarDataSource(String name) {
@@ -117,7 +116,7 @@ public class CalendarDataSource extends IntentService implements PermissionResul
 
         intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Calendar");
-        intent.putParcelableArrayListExtra(TODAY, results);
+        intent.putParcelableArrayListExtra(CalendarEvent.TAG, results);
         startService(intent);
 
     }

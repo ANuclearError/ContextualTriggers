@@ -17,6 +17,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
+import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
+import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
@@ -148,6 +150,13 @@ public class ContextUpdateManager extends Service {
                         String nearby = intent.getStringExtra("nearby");
                         contextHolder.setNearbyFoursquareData(nearby);
                         invokedServices.remove(FoursquareDataSource.TAG);
+                        break;
+                    case "Calendar":
+                        ArrayList<CalendarEvent> events =
+                                intent.getParcelableArrayListExtra(CalendarEvent.TAG);
+                        contextHolder.setTodaysEvents(events);
+                        invokedServices.remove(CalendarDataSource.TAG);
+                        break;
                     // add other data sources here
                     // for any dataservice - update context api and add invokedService.remove(tag)
                     // if set empty - notify trigger manager

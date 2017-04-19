@@ -8,11 +8,14 @@ import android.os.Parcelable;
  *
  * @author Aidan O'Grady
  */
-class CalendarEvent implements Parcelable {
+public class CalendarEvent implements Parcelable {
     /**
      * The location of the event.
      */
     private String mLocation;
+
+    public static final String TAG =
+            "com.aidanogrady.contextualtriggers.TodaysEvents";
 
     /**
      * The end time of the event.

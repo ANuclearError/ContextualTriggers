@@ -3,11 +3,14 @@ package com.aidanogrady.contextualtriggers.context;
 import android.content.Context;
 import android.os.BatteryManager;
 
+import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.BATTERY_SERVICE;
@@ -23,6 +26,7 @@ public class ContextHolder implements ContextAPI {
     private String weatherMain;
     private String weatherId;
     private String nearbyFoursquareData;
+    private List<CalendarEvent> calendarEvents;
 
     public ContextHolder() {
         // set default values
@@ -30,6 +34,7 @@ public class ContextHolder implements ContextAPI {
         this.location = new HashMap<>();
         this.weatherMain = "None";
         this.weatherId = "None";
+        this.calendarEvents = null;
     }
 
     @Override
@@ -88,5 +93,15 @@ public class ContextHolder implements ContextAPI {
 
     public String getNearbyFoursquareData(){
         return nearbyFoursquareData;
+    }
+
+    @Override
+    public List<CalendarEvent> getTodaysEvents() {
+        return calendarEvents;
+    }
+
+    @Override
+    public void setTodaysEvents(List<CalendarEvent> events) {
+        this.calendarEvents = events;
     }
 }
