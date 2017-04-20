@@ -117,8 +117,8 @@ public class ContextUpdateManager extends Service {
                         break;
                     case "Location":
                         if (invokedServices.isEmpty()) {
-                            double latitude = intent.getDoubleExtra("Latitude", 0.0);
-                            double longitude = intent.getDoubleExtra("Longitude", 0.0);
+                            double latitude = intent.getDoubleExtra("Latitude", Double.MAX_VALUE);
+                            double longitude = intent.getDoubleExtra("Longitude", Double.MAX_VALUE);
 
                             contextHolder.setLocation(latitude, longitude);
                             Toast.makeText(getApplicationContext(),
@@ -126,7 +126,8 @@ public class ContextUpdateManager extends Service {
                                     Toast.LENGTH_LONG).show();
 
                             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-                            if (latitude != 0.0 && longitude != 0.0 && activeNetwork.isConnected()) {
+                            if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
+                                    && activeNetwork.isConnected()) {
 
                                 Intent weatherIntent = new Intent(this, WeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);
