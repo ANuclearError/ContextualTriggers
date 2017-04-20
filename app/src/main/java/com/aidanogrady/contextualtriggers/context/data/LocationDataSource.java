@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,6 +25,10 @@ import com.permissioneverywhere.PermissionEverywhere;
 import com.permissioneverywhere.PermissionResponse;
 import com.permissioneverywhere.PermissionResultCallback;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+
 /**
  * The location data source provides triggers with the current location of the user's device,
  * notifying concerned triggers.
@@ -37,7 +42,7 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private static final String TAG = "LocationDS";
 
-    private static final long UPDATE_INTERVAL = 15 * 1000; // 35 * 60 * 1000
+    private static final long UPDATE_INTERVAL = 20 * 1000; // 35 * 60 * 1000
 
     private static final long FASTEST_INTERVAL = 15 * 1000; // 30 * 60 * 1000
 
@@ -71,7 +76,7 @@ public class LocationDataSource extends IntentService implements LocationListene
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
-//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setMaxWaitTime(MAX_WAIT_TIME);
 
         mIsServicesAvailable = isServicesConnected();
@@ -102,7 +107,9 @@ public class LocationDataSource extends IntentService implements LocationListene
     @Override
     public void onLocationChanged(Location location) {
         mLocation = location;
-        Log.e(TAG, "on Location Changed triggered");
+
+        Log.e(TAG, "on Location Changed triggered: "
+                + "lat " + location.getLatitude() + " long" + location.getLongitude());
 
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Location");
@@ -114,6 +121,7 @@ public class LocationDataSource extends IntentService implements LocationListene
                 ("Lat " + location.getLatitude() + "Long "+ location.getLongitude()),
                 Toast.LENGTH_LONG).show();
         System.out.printf("Lat %f Long %f", location.getLatitude(), location.getLongitude());
+
     }
 
     @Override
