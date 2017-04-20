@@ -8,9 +8,6 @@ import android.support.annotation.Nullable;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -96,7 +93,7 @@ public class FoursquareDataSource extends IntentService {
         String client_id = "V5OSSBX1OM1NHPMXR5KOGZLFNX3UXWPHSUNRRVY2WLHBK05J";
         String client_secret = "QP0JSTHIPVDJLT4NP5RKPYI4OGTELJ2SUXSBMX0VLC4PT4NY";
         String version = "20170417";
-        String parkCategories = "4bf58dd8d48988d163941735,52e81612bcbc57f1066b7a21";
+        String outdoorCategory = "4d4b7105d754a06377d81259";
         String radius = "500";
 
         FoursquareDataRequester(String lat, String lng){
@@ -117,7 +114,7 @@ public class FoursquareDataSource extends IntentService {
                         client_id,
                         client_secret,
                         version,
-                        parkCategories,
+                        outdoorCategory,
                         radius
                 );
 

@@ -32,7 +32,7 @@ public class TriggerManager {
         Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContext, mContextHolder);
 
 
-        List<Map<String, String>> timeList = new ArrayList<Map<String,String>>();
+        List<Map<String, String>> timeList = new ArrayList<>();
         Map<String,String> range_1 = new HashMap<>();
         range_1.put("from", "22:00:00");
         range_1.put("to", "23:59:00");
