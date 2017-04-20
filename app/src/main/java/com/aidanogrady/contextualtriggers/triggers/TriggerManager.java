@@ -42,6 +42,14 @@ public class TriggerManager {
         Trigger batteryTrigger = new BatteryTrigger("BatteryTrigger", mContext, mContextHolder, 75);
         Trigger foursquareTrigger = new FoursquareTrigger("FoursquareTrigger", mContext, mContextHolder);
 
+        Trigger emptyCalendarTrigger = new EmptyCalendarTrigger("EmptyCalendarTrigger", mContext, mContextHolder);
+        List<Trigger> emptyCalendarWeatherTriggers = new ArrayList<>();
+        emptyCalendarWeatherTriggers.add(emptyCalendarTrigger);
+        emptyCalendarWeatherTriggers.add(goodWeatherTrigger);
+        Trigger emptyCalendarWeatherTrigger = new EmptyCalendarWeatherTrigger(
+                emptyCalendarWeatherTriggers,
+                mContext,
+                mContextHolder);
 
         //Triggers
         mTriggers.add(batteryTrigger);
@@ -51,6 +59,8 @@ public class TriggerManager {
         mTriggers.add(weatherLocationComposite);
         mTriggers.add(foursquareTrigger);
         mTriggers.add(goodWeatherTrigger);
+        mTriggers.add(emptyCalendarTrigger);
+        mTriggers.add(emptyCalendarWeatherTrigger);
     }
 
     public void update(){
