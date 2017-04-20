@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
 
     <application
         android:allowBackup="true"
@@ -42,6 +43,7 @@
         <service android:name=".triggers.LocationTrigger"
             android:process=":my_process"/>
         <service android:name=".context.data.LocationDataSource" />
+        <service android:name=".context.data.ActivityRecognitionDataSource" />
         <service android:name=".context.data.WeatherDataSource" />
         <service android:name=".context.data.FoursquareDataSource"/>
         <service android:name=".context.data.CalendarDataSource"/>

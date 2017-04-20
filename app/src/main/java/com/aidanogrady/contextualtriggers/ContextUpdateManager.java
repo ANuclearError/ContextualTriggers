@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
+import com.aidanogrady.contextualtriggers.context.data.ActivityRecognitionDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
@@ -67,6 +68,8 @@ public class ContextUpdateManager extends Service {
         startService(weatherIntent);
         Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
         startService(foursquareIntent);
+        Intent activityIntent = new Intent(this, ActivityRecognitionDataSource.class);
+        startService(activityIntent);
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder();
