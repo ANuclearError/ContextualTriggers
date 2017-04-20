@@ -67,6 +67,8 @@ public class ContextUpdateManager extends Service {
         startService(weatherIntent);
         Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
         startService(foursquareIntent);
+        Intent calenderIntent = new Intent(this, CalendarDataSource.class);
+        startService(calenderIntent);
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder();
@@ -156,6 +158,9 @@ public class ContextUpdateManager extends Service {
                     case "Calendar":
                         ArrayList<CalendarEvent> events =
                                 intent.getParcelableArrayListExtra(CalendarEvent.TAG);
+                        if (events != null) {
+                            System.out.printf("%d events found\n", events.size());
+                        }
                         contextHolder.setTodaysEvents(events);
                         invokedServices.remove(CalendarDataSource.TAG);
                         break;

@@ -10,13 +10,15 @@ import com.aidanogrady.contextualtriggers.context.ContextAPI;
  *
  * @author Aidan O'Grady
  */
-public abstract class SimpleTrigger implements Trigger {
+abstract class SimpleTrigger implements Trigger {
     /**
      * Constructs a new SimpleTrigger with the given name.
      *
-     * @param name  the name of the service for this trigger.
+     * @param name  the name of the service for this trigger
+     * @param context  the Android context for calling intents etc
+     * @param holder  the data source holder for accessing data
      */
-    public SimpleTrigger(String name, Context context, ContextAPI holder) {
+    SimpleTrigger(String name, Context context, ContextAPI holder) {
     }
 
     @Override
