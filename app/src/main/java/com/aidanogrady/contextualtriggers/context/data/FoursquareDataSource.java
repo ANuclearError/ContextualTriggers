@@ -93,8 +93,16 @@ public class FoursquareDataSource extends IntentService {
         String client_id = "V5OSSBX1OM1NHPMXR5KOGZLFNX3UXWPHSUNRRVY2WLHBK05J";
         String client_secret = "QP0JSTHIPVDJLT4NP5RKPYI4OGTELJ2SUXSBMX0VLC4PT4NY";
         String version = "20170417";
-        String outdoorCategory = "4d4b7105d754a06377d81259";
-        String radius = "500";
+        String outdoorCategory = "56aa371be4b08b9a8d57355e," +
+                "52e81612bcbc57f1066b7a23," +
+                "4eb1d4d54b900d56c88a45fc," +
+                "52e81612bcbc57f1066b7a21," +
+                "52e81612bcbc57f1066b7a13," +
+                "4bf58dd8d48988d163941735," +
+                "4bf58dd8d48988d159941735," +
+                "52e81612bcbc57f1066b7a22";
+
+        String radius = "75";
 
         FoursquareDataRequester(String lat, String lng){
             latitude = lat;
