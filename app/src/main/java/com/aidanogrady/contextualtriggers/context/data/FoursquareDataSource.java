@@ -102,7 +102,7 @@ public class FoursquareDataSource extends IntentService {
                 "4bf58dd8d48988d159941735," +
                 "52e81612bcbc57f1066b7a22";
 
-        String radius = "75";
+        String radius = "400";
 
         FoursquareDataRequester(String lat, String lng){
             latitude = lat;
