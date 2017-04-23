@@ -9,8 +9,7 @@ import android.os.Parcelable;
  * @author Aidan O'Grady
  */
 public class CalendarEvent implements Parcelable {
-    public static final String TAG =
-            "com.aidanogrady.contextualtriggers.TodaysEvents";
+    public static final String TAG = "com.aidanogrady.contextualtriggers.TodaysEvents";
 
     /**
      * The title of this event.
@@ -55,5 +54,32 @@ public class CalendarEvent implements Parcelable {
         parcel.writeString(mTitle);
         parcel.writeString(mLocation);
         parcel.writeLong(mStartTime);
+    }
+
+    /**
+     * Returns the title of the event.
+     *
+     * @return event title
+     */
+    public String getTitle() {
+        return mTitle;
+    }
+
+    /**
+     * Returns the location of the event.
+     *
+     * @return event location
+     */
+    public String getLocation() {
+        return mLocation;
+    }
+
+    /**
+     * Returns the starting time of the event.
+     *
+     * @return event start time
+     */
+    public long getStartTime() {
+        return mStartTime;
     }
 }
