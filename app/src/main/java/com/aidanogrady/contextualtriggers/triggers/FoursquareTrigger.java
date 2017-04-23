@@ -42,6 +42,7 @@ public class FoursquareTrigger extends SimpleTrigger {
 
     private List<Pair<String,String>> mRecentLocations;
     private double mRecentVisitThreshold = 90;
+    private int categoryVisitThreshold = 10;
 
     public FoursquareTrigger(String name, Context context, ContextAPI holder) {
         super(name, context, holder);
@@ -90,17 +91,26 @@ public class FoursquareTrigger extends SimpleTrigger {
             JSONObject nearbyJson = new JSONObject(nearby).getJSONObject("response");
             JSONArray jsonArray = nearbyJson.getJSONArray("venues");
 
+            SharedPreferences commonLocations = mContext.getSharedPreferences("locationPrefs", 0);
+
             if(jsonArray.length() != 0){
 
                 updateTally(jsonArray);
 
                 for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject parkObject = jsonArray.getJSONObject(i);
-                    String name = parkObject.getString("name");
-                    JSONObject statsObject = parkObject.getJSONObject("stats");
+                    JSONObject venueObject = jsonArray.getJSONObject(i);
+                    String name = venueObject.getString("name");
+                    JSONObject statsObject = venueObject.getJSONObject("stats");
                     int checkIns = statsObject.getInt("checkinsCount");
 
-                    if(checkIns >= 100) {
+                    String category = venueObject
+                            .getJSONArray("categories")
+                            .getJSONObject(0)
+                            .getString("name");
+
+                    int categoryTally = commonLocations.getInt(category, -1);
+
+                    if(checkIns >= 100 && categoryTally >= categoryVisitThreshold) {
                         mNotificationTitle = "Great location nearby!";
                         mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
                         return true;
