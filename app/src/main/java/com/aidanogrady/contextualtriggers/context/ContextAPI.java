@@ -30,5 +30,4 @@ public interface ContextAPI  {
 
     List<CalendarEvent> getTodaysEvents();
 
-    void setTodaysEvents(List<CalendarEvent> events);
 }

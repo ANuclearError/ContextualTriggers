@@ -18,7 +18,7 @@ import java.util.Map;
 import static android.content.Context.BATTERY_SERVICE;
 
 /**
- * Created by ASUS on 15/04/2017.
+ * Created by Kristine on 15/04/2017.
  */
 
 public class ContextHolder implements ContextAPI {
@@ -113,7 +113,6 @@ public class ContextHolder implements ContextAPI {
         return calendarEvents;
     }
 
-    @Override
     public void setTodaysEvents(List<CalendarEvent> events) {
         this.calendarEvents = events;
     }
