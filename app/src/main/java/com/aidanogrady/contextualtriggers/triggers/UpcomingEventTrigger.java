@@ -99,13 +99,6 @@ public class UpcomingEventTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-        if (isTriggered()) {
-            notifyUser();
-        }
-    }
-
-    @Override
     public Boolean isTriggered() {
         List<CalendarEvent> today = mContextHolder.getTodaysEvents();
 

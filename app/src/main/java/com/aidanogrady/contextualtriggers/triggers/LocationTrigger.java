@@ -58,25 +58,25 @@ public class LocationTrigger extends SimpleTrigger {
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    @Override
-    public void notifyIfTriggered() {
-
-//        if (o instanceof Location) {
-//            double latitude = ((Location) o).getLatitude();
-//            double longitude = ((Location) o).getLongitude();
+//    @Override
+//    public void notifyIfTriggered() {
 //
-//            float[] res = new float[1];
-//            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
-//            double dist = res[0];
+////        if (o instanceof Location) {
+////            double latitude = ((Location) o).getLatitude();
+////            double longitude = ((Location) o).getLongitude();
+////
+////            float[] res = new float[1];
+////            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
+////            double dist = res[0];
+////
+////            if (dist < RADIUS_M) {
+////                //            notifyUser(getApplicationContext());
+////            }
+////        }
 //
-//            if (dist < RADIUS_M) {
-//                //            notifyUser(getApplicationContext());
-//            }
-//        }
-
-        notifyUser();
-
-    }
+//        notifyUser();
+//
+//    }
 
     @Override
     public Boolean isTriggered() {

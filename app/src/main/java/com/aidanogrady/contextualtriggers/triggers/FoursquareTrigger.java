@@ -65,14 +65,6 @@ public class FoursquareTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-
-            if(isTriggered()) {
-                notifyUser();
-            }
-    }
-
-    @Override
     public Boolean isTriggered() {
         String nearby = mContextHolder.getNearbyFoursquareData();
 

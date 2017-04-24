@@ -43,7 +43,7 @@ public class StepsWeatherCompositeTrigger extends CompositeTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
+    public Boolean isTriggered() {
         boolean allTriggersActivated = true;
 
         for(Trigger t: mTriggers){
@@ -52,13 +52,6 @@ public class StepsWeatherCompositeTrigger extends CompositeTrigger {
             }
         }
 
-        if(allTriggersActivated){
-            notifyUser();
-        }
-    }
-
-    @Override
-    public Boolean isTriggered() {
-        return null;
+        return allTriggersActivated;
     }
 }

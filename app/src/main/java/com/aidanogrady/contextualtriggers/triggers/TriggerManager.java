@@ -65,7 +65,7 @@ public class TriggerManager {
 
     public void update(){
         for(Trigger t: mTriggers){
-            t.notifyIfTriggered();
+            t.isTriggered();
         }
     }
 

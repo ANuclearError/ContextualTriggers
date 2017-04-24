@@ -33,25 +33,25 @@ public class StepsTrigger extends SimpleTrigger {
         // make notification
     }
 
-    @Override
-    public void notifyIfTriggered() {
-        int steps = mContextHolder.getSteps();
-        try {
-            Date currentTime = mContextHolder.getCurrentTime();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(currentTime);
-//            calendar.add(Calendar.DATE, 1);
-            int hour = calendar.HOUR_OF_DAY;
-
-            if (hour >= 12 && steps < lowSteps)
-                notifyUser();
-
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    @Override
+//    public void notifyIfTriggered() {
+//        int steps = mContextHolder.getSteps();
+//        try {
+//            Date currentTime = mContextHolder.getCurrentTime();
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(currentTime);
+////            calendar.add(Calendar.DATE, 1);
+//            int hour = calendar.HOUR_OF_DAY;
+//
+//            if (hour >= 12 && steps < lowSteps)
+//                notifyUser();
+//
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     @Override
     public Boolean isTriggered() {

@@ -21,7 +21,5 @@ interface Trigger{
      */
     void notifyUser();
 
-    void notifyIfTriggered();
-
     Boolean isTriggered();
 }

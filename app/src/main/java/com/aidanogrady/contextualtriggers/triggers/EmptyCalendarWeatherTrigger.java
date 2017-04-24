@@ -76,13 +76,6 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-        if (isTriggered()) {
-            notifyUser();
-        }
-    }
-
-    @Override
     public Boolean isTriggered() {
         boolean shouldTrigger = true;
         for (Trigger trigger: mTriggers) {

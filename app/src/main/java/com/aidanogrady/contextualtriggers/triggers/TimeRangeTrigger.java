@@ -57,15 +57,6 @@ public class TimeRangeTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-
-        if(checkTimeInRange()){
-            notifyUser();
-        }
-
-    }
-
-    @Override
     public Boolean isTriggered() {
         return checkTimeInRange();
     }

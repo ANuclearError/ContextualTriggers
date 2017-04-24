@@ -49,24 +49,6 @@ public class WeatherTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-
-        String id = mContextHolder.getWeatherId();
-        System.out.println("WEATHER ID: " + id);
-        if(id != null){
-
-            for (String mId : mIdList) {
-                if (id.equals(mId)) {
-                    if(handleWeatherInfo(id)){
-                        notifyUser();
-                    }
-                }
-            }
-        }
-
-    }
-
-    @Override
     public Boolean isTriggered() {
         String id = mContextHolder.getWeatherId();
 

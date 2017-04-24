@@ -77,13 +77,6 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-        if (isTriggered()) {
-            notifyUser();
-        }
-    }
-
-    @Override
     public Boolean isTriggered() {
         List<CalendarEvent> events = mContextHolder.getTodaysEvents();
         System.out.printf("Events is null: %s", events == null);

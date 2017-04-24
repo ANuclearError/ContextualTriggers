@@ -53,13 +53,6 @@ public class BatteryTrigger extends SimpleTrigger {
     }
 
     @Override
-    public void notifyIfTriggered() {
-        if(isTriggered()){
-            notifyUser();
-        }
-    }
-
-    @Override
     public Boolean isTriggered() {
 
         int batteryLevel = mContextHolder.getBatteryLevel(mContext);
