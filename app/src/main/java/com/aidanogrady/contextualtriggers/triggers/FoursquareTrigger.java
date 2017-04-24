@@ -41,8 +41,9 @@ public class FoursquareTrigger extends SimpleTrigger {
     private String mNotificationMessage;
 
     private List<Pair<String,String>> mRecentLocations;
-    private double mRecentVisitThreshold = 90;
+    private double mRecentVisitThreshold = 90; // Time in minutes
     private int categoryVisitThreshold = 10;
+    private int mCheckinThreshold = 100;
 
     public FoursquareTrigger(String name, Context context, ContextAPI holder) {
         super(name, context, holder);
@@ -110,7 +111,7 @@ public class FoursquareTrigger extends SimpleTrigger {
 
                     int categoryTally = commonLocations.getInt(category, -1);
 
-                    if(checkIns >= 100 && categoryTally >= categoryVisitThreshold) {
+                    if(checkIns >= mCheckinThreshold && categoryTally >= categoryVisitThreshold) {
                         mNotificationTitle = "Great location nearby!";
                         mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
                         return true;
@@ -144,6 +145,7 @@ public class FoursquareTrigger extends SimpleTrigger {
             SharedPreferences.Editor editor = commonLocations.edit();
             if(categoryTally >= 0) {
                 if(!visitedRecently(venueName)) {
+                    System.out.println("CATEGORY VISITS: " + (categoryTally + 1));
                     editor.putInt(category, categoryTally + 1);
                 }
             }else{
@@ -173,15 +175,15 @@ public class FoursquareTrigger extends SimpleTrigger {
                     System.out.println(current_time);
 
                     long difference = current_time.getTime() - previous_time.getTime();
-                    long hoursDifference = difference / (60 * 1000);
-                    System.out.println("DIFFERENCE: " + hoursDifference);
+                    long minutesDifference = difference / (60 * 1000);
+                    System.out.println("DIFFERENCE: " + minutesDifference);
 
-                    if(hoursDifference > mRecentVisitThreshold){
+                    if(minutesDifference > mRecentVisitThreshold){
                         mRecentLocations.remove(location);
                         mRecentLocations.add(new Pair<>(name,format.format(current_time)));
-                        return true;
-                    }else{
                         return false;
+                    }else{
+                        return true;
                     }
 
 
