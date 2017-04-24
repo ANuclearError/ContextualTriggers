@@ -98,6 +98,8 @@ public class UpcomingEventTrigger extends SimpleTrigger {
 
     }
 
+
+
     @Override
     public void notifyIfTriggered() {
         if (isTriggered()) {

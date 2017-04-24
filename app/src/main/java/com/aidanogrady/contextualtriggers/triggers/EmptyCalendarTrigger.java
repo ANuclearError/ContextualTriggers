@@ -1,7 +1,10 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.CalendarContract;
 import android.support.v4.app.NotificationCompat;
 
 import com.aidanogrady.contextualtriggers.R;
@@ -75,6 +78,7 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
                 (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
 
     @Override
     public void notifyIfTriggered() {
