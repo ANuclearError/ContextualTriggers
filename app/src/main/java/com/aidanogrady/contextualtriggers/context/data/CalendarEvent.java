@@ -29,7 +29,10 @@ public class CalendarEvent implements Parcelable {
     public static final Creator<CalendarEvent> CREATOR = new Creator<CalendarEvent>() {
         @Override
         public CalendarEvent createFromParcel(Parcel in) {
-            return new CalendarEvent(in);
+            String title = in.readString();
+            String location = in.readString();
+            long startTime = in.readLong();
+            return new CalendarEvent(title, location, startTime);
         }
 
         @Override
@@ -38,10 +41,10 @@ public class CalendarEvent implements Parcelable {
         }
     };
 
-    private CalendarEvent(Parcel in) {
-        mTitle = in.readString();
-        mLocation = in.readString();
-        mStartTime = in.readLong();
+    private CalendarEvent(String title, String location, long startTime) {
+        mTitle = title;
+        mLocation = location;
+        mStartTime = startTime;
     }
 
     @Override

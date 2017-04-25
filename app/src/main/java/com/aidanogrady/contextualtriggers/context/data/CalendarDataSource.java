@@ -96,10 +96,11 @@ public class CalendarDataSource extends IntentService implements PermissionResul
                     parcel.writeString(title);
                     parcel.writeString(location);
                     parcel.writeLong(begin);
-                    results.add(CalendarEvent.CREATOR.createFromParcel(parcel));
+                    parcel.setDataPosition(0);
+                    CalendarEvent event = CalendarEvent.CREATOR.createFromParcel(parcel);
+                    results.add(event);
                     parcel.recycle();
                 }
-
                 cursor.close();
             }
         }
@@ -131,8 +132,6 @@ public class CalendarDataSource extends IntentService implements PermissionResul
                 Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED;
         if (!read) {
             this.stopSelf();
-        } else {
-            onHandleIntent(null);
         }
     }
 }

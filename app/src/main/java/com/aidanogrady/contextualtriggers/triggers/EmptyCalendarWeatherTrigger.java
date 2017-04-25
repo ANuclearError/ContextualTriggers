@@ -48,7 +48,7 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
     private Context mContext;
 
     /**
-     * The data source containining information.
+     * The data source containing information.
      */
     private ContextAPI mContextHolder;
 

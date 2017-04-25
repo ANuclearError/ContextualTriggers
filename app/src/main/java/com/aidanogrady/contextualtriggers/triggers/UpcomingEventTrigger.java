@@ -1,17 +1,17 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +42,8 @@ public class UpcomingEventTrigger extends SimpleTrigger {
     /**
      * The text of this notification.
      */
-    private static final String NOTIFICATION_TEXT = "You have an event at %s, why not walk to %s?";
+    private static final String NOTIFICATION_TEXT =
+            "You have an event today at %s, why not walk to %s? Tap for a suggested route.";
 
     /**
      * The name of the trigger.
@@ -82,8 +83,7 @@ public class UpcomingEventTrigger extends SimpleTrigger {
     public void notifyUser() {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(mNextEvent.getStartTime());
-        DateFormat sdf = SimpleDateFormat.getTimeInstance();
-        String time = sdf.format(cal);
+        String time = cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
         String location = mNextEvent.getLocation();
 
         String notificationTitle = String.format(NOTIFICATION_TEXT, time, location);
@@ -91,14 +91,28 @@ public class UpcomingEventTrigger extends SimpleTrigger {
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.basic_notification_icon)
                         .setContentTitle(NOTIFICATION_TITLE) // to do
-                        .setContentText(notificationTitle);
+                        .setContentText(notificationTitle)
+                        .setContentIntent(getMapsIntent());
         NotificationManager mNotifyMgr =
                 (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
 
     }
 
-
+    /**
+     * Returns the intent for allowing for an .
+     *
+     * @return map intent
+     */
+    private PendingIntent getMapsIntent() {
+        String location = mNextEvent.getLocation();
+        String locUri = Uri.encode(location);
+        String baseUri = "google.navigation:q=%s&mode=w";
+        Uri gmmIntentUri = Uri.parse(String.format(baseUri, locUri));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        return PendingIntent.getActivity(mContext, 0, mapIntent, 0);
+    }
 
     @Override
     public void notifyIfTriggered() {
