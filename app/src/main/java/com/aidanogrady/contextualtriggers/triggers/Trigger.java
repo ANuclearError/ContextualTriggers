@@ -8,20 +8,12 @@ package com.aidanogrady.contextualtriggers.triggers;
  * @author Aidan O'Grady
  */
 interface Trigger{
-    /**
-     * Returns the complexity of this trigger.
-     *
-     * @return the trigger complexity
-     *
-     */
+
     int getComplexity();
 
-    /**
-     * Notify the user when the contextual information indicates this is the best time to do so.
-     */
-    void notifyUser();
+    String getNotificationTitle();
 
-    void notifyIfTriggered();
+    String getNotificationMessage();
 
     Boolean isTriggered();
 }

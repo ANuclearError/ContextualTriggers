@@ -1,17 +1,17 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,9 +25,15 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class UpcomingEventTrigger extends SimpleTrigger {
     /**
-     * The number of minutes the next event should start from now to trigger.
+     * The minimum threshold for when to send this trigger.
      */
-    private static final int MINUTES_THRESHOLD = 90;
+    private static final int MIN_MINUTES_THRESHOLD = 30;
+
+
+    /**
+     * The maximum threshold for when to send this trigger..
+     */
+    private static final int MAX_MINUTES_THRESHOLD = 90;
 
     /**
      * Notification id.
@@ -42,7 +48,8 @@ public class UpcomingEventTrigger extends SimpleTrigger {
     /**
      * The text of this notification.
      */
-    private static final String NOTIFICATION_TEXT = "You have an event at %s, why not walk to %s?";
+    private static final String NOTIFICATION_TEXT =
+            "You have an event today at %s, why not walk to %s? Tap for a suggested route.";
 
     /**
      * The name of the trigger.
@@ -67,42 +74,54 @@ public class UpcomingEventTrigger extends SimpleTrigger {
     /**
      * Constructs a new SimpleTrigger with the given name.
      *
-     * @param name    the name of the service for this trigger
-     * @param context the Android context for calling intents etc
      * @param holder  the data source holder for accessing data
      */
-    UpcomingEventTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        this.mName = name;
-        this.mContext = context;
+    UpcomingEventTrigger(ContextAPI holder) {
+        super(holder);
         this.mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser() {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(mNextEvent.getStartTime());
-        DateFormat sdf = SimpleDateFormat.getTimeInstance();
-        String time = sdf.format(cal);
-        String location = mNextEvent.getLocation();
-
-        String notificationTitle = String.format(NOTIFICATION_TEXT, time, location);
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle(NOTIFICATION_TITLE) // to do
-                        .setContentText(notificationTitle);
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
-
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
     }
 
     @Override
-    public void notifyIfTriggered() {
-        if (isTriggered()) {
-            notifyUser();
-        }
+    public String getNotificationMessage() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(mNextEvent.getStartTime());
+        String time = cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
+        String location = mNextEvent.getLocation();
+
+        String notificationText = String.format(NOTIFICATION_TEXT, time, location);
+        return notificationText;
+    }
+
+    //TODO Intents need fixed
+//    String notificationTitle = String.format(NOTIFICATION_TEXT, time, location);
+//    NotificationCompat.Builder mBuilder =
+//            new NotificationCompat.Builder(mContext)
+//                    .setSmallIcon(R.drawable.basic_notification_icon)
+//                    .setContentTitle(NOTIFICATION_TITLE) // to do
+//                    .setContentText(notificationTitle)
+//                    .setContentIntent(getMapsIntent());
+//    NotificationManager mNotifyMgr =
+//            (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
+//        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
+
+    /**
+     * Returns the intent for allowing for an .
+     *
+     * @return map intent
+     */
+    private PendingIntent getMapsIntent() {
+        String location = mNextEvent.getLocation();
+        String locUri = Uri.encode(location);
+        String baseUri = "google.navigation:q=%s&mode=w";
+        Uri gmmIntentUri = Uri.parse(String.format(baseUri, locUri));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        return PendingIntent.getActivity(mContext, 0, mapIntent, 0);
     }
 
     @Override
@@ -121,6 +140,6 @@ public class UpcomingEventTrigger extends SimpleTrigger {
 
         // Get the difference between times in minutes, shouldn't be negative but making sure.
         long diff = TimeUnit.MILLISECONDS.toMinutes(Math.abs(start - now));
-        return diff <= MINUTES_THRESHOLD;
+        return diff >= MIN_MINUTES_THRESHOLD && diff <= MAX_MINUTES_THRESHOLD;
     }
 }

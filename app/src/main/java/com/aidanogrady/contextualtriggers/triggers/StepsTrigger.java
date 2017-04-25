@@ -22,39 +22,43 @@ public class StepsTrigger extends SimpleTrigger {
     private int midSteps = 5000;
     private int highSteps = 10000;
 
-    StepsTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        mContext = context;
+    StepsTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser() {
-        // make notification
+    public String getNotificationTitle() {
+        return null;
     }
 
     @Override
-    public void notifyIfTriggered() {
-        int steps = mContextHolder.getSteps();
-        try {
-            Date currentTime = mContextHolder.getCurrentTime();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(currentTime);
-//            calendar.add(Calendar.DATE, 1);
-            int hour = calendar.HOUR_OF_DAY;
-
-            if (hour >= 12 && steps < lowSteps)
-                notifyUser();
-
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+    public String getNotificationMessage() {
+        return null;
     }
+
+//    @Override
+//    public void notifyIfTriggered() {
+//        int steps = mContextHolder.getSteps();
+//        try {
+//            Date currentTime = mContextHolder.getCurrentTime();
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(currentTime);
+////            calendar.add(Calendar.DATE, 1);
+//            int hour = calendar.HOUR_OF_DAY;
+//
+//            if (hour >= 12 && steps < lowSteps)
+//                notifyUser();
+//
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     @Override
     public Boolean isTriggered() {
-        return null;
+        return false;
     }
 }

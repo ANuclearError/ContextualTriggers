@@ -1,7 +1,10 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.CalendarContract;
 import android.support.v4.app.NotificationCompat;
 
 import com.aidanogrady.contextualtriggers.R;
@@ -45,7 +48,7 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
     private Context mContext;
 
     /**
-     * The data source containining information.
+     * The data source containing information.
      */
     private ContextAPI mContextHolder;
 
@@ -56,30 +59,45 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
      * @param c  the context of the service
      * @param holder  the data holder
      */
-    EmptyCalendarWeatherTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-        super(triggers, c, holder);
+    EmptyCalendarWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {
+        super(triggers, holder);
         mTriggers = triggers;
-        mContext = c;
         mContextHolder = holder;
     }
 
     @Override
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
+    }
+
+    //TODO Change to take out context required intent
     public void notifyUser() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle(NOTIFICATION_TITLE) // to do
-                        .setContentText(NOTIFICATION_TEXT);
+                        .setContentText(NOTIFICATION_TEXT)
+                        .setContentIntent(getCalendarIntent());
         NotificationManager mNotifyMgr =
                 (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
+    /**
+     * Returns the intent for allowing for an event to be added to the calendar.
+     *
+     * @return calendar intent
+     */
+    private PendingIntent getCalendarIntent() {
+        Intent intent = new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.Events.TITLE, "Walking")
+                .putExtra(CalendarContract.Events.DESCRIPTION, "Created by ContextualTriggers");
+        return PendingIntent.getActivity(mContext, 0, intent, 0);
+    }
+
     @Override
-    public void notifyIfTriggered() {
-        if (isTriggered()) {
-            notifyUser();
-        }
+    public String getNotificationMessage() {
+        return NOTIFICATION_TEXT;
     }
 
     @Override

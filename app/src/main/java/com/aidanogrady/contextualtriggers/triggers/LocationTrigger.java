@@ -32,51 +32,46 @@ public class LocationTrigger extends SimpleTrigger {
     private static final double RADIUS_M = 1000;
 
 
-    private Context mContext;
     private ContextAPI mContextHolder;
+    private String mTitle;
+    private String mMessage;
 
-    LocationTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        mContext = context;
+    LocationTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
+        mTitle = "Location Notification";
+        mMessage = "You're in a place!";
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("Location Notification")
-                        .setContentText("You're in a place!");
-
-        int mNotificationId = 001;
-
-
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    public String getNotificationTitle() {
+        return mTitle;
     }
 
     @Override
-    public void notifyIfTriggered() {
-
-//        if (o instanceof Location) {
-//            double latitude = ((Location) o).getLatitude();
-//            double longitude = ((Location) o).getLongitude();
-//
-//            float[] res = new float[1];
-//            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
-//            double dist = res[0];
-//
-//            if (dist < RADIUS_M) {
-//                //            notifyUser(getApplicationContext());
-//            }
-//        }
-
-        notifyUser();
-
+    public String getNotificationMessage() {
+        return mMessage;
     }
+
+//    @Override
+//    public void notifyIfTriggered() {
+//
+////        if (o instanceof Location) {
+////            double latitude = ((Location) o).getLatitude();
+////            double longitude = ((Location) o).getLongitude();
+////
+////            float[] res = new float[1];
+////            Location.distanceBetween(latitude, longitude, TARGET_LATITUDE, TARGET_LONGITUDE, res);
+////            double dist = res[0];
+////
+////            if (dist < RADIUS_M) {
+////                //            notifyUser(getApplicationContext());
+////            }
+////        }
+//
+//        notifyUser();
+//
+//    }
 
     @Override
     public Boolean isTriggered() {
