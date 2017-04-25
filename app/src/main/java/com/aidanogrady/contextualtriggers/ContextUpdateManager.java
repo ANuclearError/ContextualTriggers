@@ -1,7 +1,6 @@
 package com.aidanogrady.contextualtriggers;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
@@ -24,7 +22,9 @@ import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
-import com.aidanogrady.contextualtriggers.context.data.WeatherDataSource;
+import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
+import com.aidanogrady.contextualtriggers.context.data.WeatherForecast;
+import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class ContextUpdateManager extends Service {
         startService(stepCounter);
         Intent locationIntent = new Intent(this, LocationDataSource.class);
         startService(locationIntent);
-        Intent weatherIntent = new Intent(this, WeatherDataSource.class);
+        Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
         startService(weatherIntent);
         Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
         startService(foursquareIntent);
@@ -138,7 +138,7 @@ public class ContextUpdateManager extends Service {
                             if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
                                     && activeNetwork.isConnected()) {
 
-                                Intent weatherIntent = new Intent(this, WeatherDataSource.class);
+                                Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);
                                 weatherIntent.putExtra("Longitude", longitude);
                                 startService(weatherIntent);
@@ -148,15 +148,15 @@ public class ContextUpdateManager extends Service {
                                 foursquareIntent.putExtra("Longitude", longitude);
                                 startService(foursquareIntent);
                                 // add tags of any invoked services here
-                                invokedServices.add(WeatherDataSource.TAG);
+                                invokedServices.add(OpenWeatherDataSource.TAG);
                                 invokedServices.add(FoursquareDataSource.TAG);
                             }
                         }
                         break;
                     case "Weather":
-                        String id = intent.getStringExtra("id");
-                        contextHolder.setWeatherId(id);
-                        invokedServices.remove(WeatherDataSource.TAG);
+                        WeatherResult result = intent.getParcelableExtra(WeatherResult.TAG);
+                        contextHolder.setWeatherForecast(result);
+                        invokedServices.remove(OpenWeatherDataSource.TAG);
                         break;
                     case "Foursquare":
                         String nearby = intent.getStringExtra("nearby");

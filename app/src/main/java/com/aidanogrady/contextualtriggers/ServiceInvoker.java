@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
-import com.aidanogrady.contextualtriggers.context.data.WeatherDataSource;
+import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
 
 /**
  * Created by Kristine on 14/04/2017.
@@ -27,7 +27,7 @@ public class ServiceInvoker extends BroadcastReceiver {
         Intent locationIntent = new Intent(context, LocationDataSource.class);
         context.startService(locationIntent);
 
-        Intent weatherIntent = new Intent(context, WeatherDataSource.class);
+        Intent weatherIntent = new Intent(context, OpenWeatherDataSource.class);
         context.startService(weatherIntent);
     }
 }

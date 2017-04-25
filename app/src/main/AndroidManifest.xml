@@ -43,7 +43,7 @@
             android:process=":my_process"/>
         <service android:name=".context.data.LocationDataSource" />
         <service android:name=".context.data.ActivityRecognitionDataSource" />
-        <service android:name=".context.data.WeatherDataSource" />
+        <service android:name=".context.data.OpenWeatherDataSource" />
         <service android:name=".context.data.FoursquareDataSource"/>
         <service android:name=".context.data.CalendarDataSource"/>
         <service android:name=".context.data.GeofenceTransitionsService"/>
