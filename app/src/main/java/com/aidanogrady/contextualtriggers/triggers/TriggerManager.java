@@ -63,7 +63,7 @@ public class TriggerManager {
                 upcomingEventWeatherTriggerList,
                 mContext,
                 mContextHolder);
-        
+
         //Triggers
         mTriggers.add(batteryTrigger);
         mTriggers.add(timeRangeTrigger);

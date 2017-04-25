@@ -25,9 +25,15 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class UpcomingEventTrigger extends SimpleTrigger {
     /**
-     * The number of minutes the next event should start from now to trigger.
+     * The minimum threshold for when to send this trigger.
      */
-    private static final int MINUTES_THRESHOLD = 90;
+    private static final int MIN_MINUTES_THRESHOLD = 30;
+
+
+    /**
+     * The maximum threshold for when to send this trigger..
+     */
+    private static final int MAX_MINUTES_THRESHOLD = 90;
 
     /**
      * Notification id.
@@ -137,6 +143,6 @@ public class UpcomingEventTrigger extends SimpleTrigger {
 
         // Get the difference between times in minutes, shouldn't be negative but making sure.
         long diff = TimeUnit.MILLISECONDS.toMinutes(Math.abs(start - now));
-        return diff <= MINUTES_THRESHOLD;
+        return diff >= MIN_MINUTES_THRESHOLD && diff <= MAX_MINUTES_THRESHOLD;
     }
 }
