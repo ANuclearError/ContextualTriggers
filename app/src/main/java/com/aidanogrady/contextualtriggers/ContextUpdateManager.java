@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
@@ -128,7 +129,7 @@ public class ContextUpdateManager extends Service {
                             double latitude = intent.getDoubleExtra("Latitude", Double.MAX_VALUE);
                             double longitude = intent.getDoubleExtra("Longitude", Double.MAX_VALUE);
 
-                            contextHolder.setLocation(latitude, longitude);
+                            contextHolder.setLocation(new Pair<>(latitude, longitude));
                             Toast.makeText(getApplicationContext(),
                                     ("Received: Lat " + latitude + "Long "+ longitude),
                                     Toast.LENGTH_LONG).show();

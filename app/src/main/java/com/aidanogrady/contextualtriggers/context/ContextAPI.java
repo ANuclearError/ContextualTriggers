@@ -2,13 +2,13 @@ package com.aidanogrady.contextualtriggers.context;
 
 
 import android.content.Context;
+import android.util.Pair;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by thomas on 10/04/17.
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public interface ContextAPI  {
 
-    Map<String, Double> getLocation();
+    Pair<Double, Double> getLocation();
 
     int getSteps();
 

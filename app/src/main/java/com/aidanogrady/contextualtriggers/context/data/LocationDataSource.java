@@ -2,6 +2,7 @@ package com.aidanogrady.contextualtriggers.context.data;
 
 import android.Manifest;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,6 +19,8 @@ import com.aidanogrady.contextualtriggers.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -28,6 +31,7 @@ import com.permissioneverywhere.PermissionResultCallback;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * The location data source provides triggers with the current location of the user's device,
@@ -55,6 +59,14 @@ public class LocationDataSource extends IntentService implements LocationListene
     private boolean mRequestInProgress;
 
     private boolean mIsServicesAvailable;
+
+    // geofencing
+
+    private List<Geofence> mGeofenceList;
+
+    private static final int GEOFENCE_RADIUS = 150;
+
+    private PendingIntent mGeofencePendingIntent;
 
     /**
      * The last recorded location recorded.
@@ -185,6 +197,58 @@ public class LocationDataSource extends IntentService implements LocationListene
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                     mLocationRequest,
                     this);
+
         }
+    }
+
+    // Geofencing stuff below
+
+    private void createGeofence(String id, double latitude, double longitude) {
+        mGeofenceList.add(new Geofence.Builder()
+                            .setRequestId(id)
+                            .setCircularRegion(
+                                    latitude,
+                                    longitude,
+                                    GEOFENCE_RADIUS
+                            )
+                            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                                Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .build());
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        return new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
+                .addGeofences(mGeofenceList)
+                .build();
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        if (mGeofencePendingIntent != null)
+            return mGeofencePendingIntent;
+
+        Intent intent = new Intent(this, GeofenceTransitionsService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void addGeofences() {
+        boolean coarse = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean fine = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (fine && coarse) {
+            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
+                                    getGeofencingRequest(),
+                                    getGeofencePendingIntent());
+        }
+    }
+
+    private void removeGeofences() {
+        LocationServices.GeofencingApi.removeGeofences(
+                mGoogleApiClient,
+                getGeofencePendingIntent()
+        );
     }
 }

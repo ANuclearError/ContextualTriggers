@@ -46,6 +46,7 @@
         <service android:name=".context.data.WeatherDataSource" />
         <service android:name=".context.data.FoursquareDataSource"/>
         <service android:name=".context.data.CalendarDataSource"/>
+        <service android:name=".context.data.GeofenceTransitionsService"/>
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.util.Pair;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
@@ -11,11 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static android.content.Context.BATTERY_SERVICE;
 
 /**
  * Created by Kristine on 15/04/2017.
@@ -24,7 +21,7 @@ import static android.content.Context.BATTERY_SERVICE;
 public class ContextHolder implements ContextAPI {
 
     private int steps;
-    private Map<String, Double> location;
+    private Pair<Double, Double> location;
     private String weatherMain;
     private String weatherId;
     private String nearbyFoursquareData;
@@ -33,14 +30,14 @@ public class ContextHolder implements ContextAPI {
     public ContextHolder() {
         // set default values
         this.steps = -1;
-        this.location = new HashMap<>();
+        this.location = null;
         this.weatherMain = "None";
         this.weatherId = "None";
         this.calendarEvents = null;
     }
 
     @Override
-    public Map<String, Double> getLocation() {
+    public Pair<Double, Double> getLocation() {
         return location;
     }
 
@@ -54,9 +51,8 @@ public class ContextHolder implements ContextAPI {
         this.steps = steps;
     }
 
-    public void setLocation(double latitude, double longitude) {
-        location.put("Latitude", latitude);
-        location.put("Longitude", longitude);
+    public void setLocation(Pair<Double, Double> location) {
+        this.location = location;
     }
 
     public String getWeatherId(){
