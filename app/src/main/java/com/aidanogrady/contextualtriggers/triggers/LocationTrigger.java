@@ -32,30 +32,25 @@ public class LocationTrigger extends SimpleTrigger {
     private static final double RADIUS_M = 1000;
 
 
-    private Context mContext;
     private ContextAPI mContextHolder;
+    private String mTitle;
+    private String mMessage;
 
-    LocationTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        mContext = context;
+    LocationTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
+        mTitle = "Location Notification";
+        mMessage = "You're in a place!";
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("Location Notification")
-                        .setContentText("You're in a place!");
+    public String getNotificationTitle() {
+        return mTitle;
+    }
 
-        int mNotificationId = 001;
-
-
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    @Override
+    public String getNotificationMessage() {
+        return mMessage;
     }
 
 //    @Override

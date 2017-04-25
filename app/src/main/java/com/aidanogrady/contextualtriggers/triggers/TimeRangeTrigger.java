@@ -9,6 +9,7 @@ import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,28 +33,29 @@ public class TimeRangeTrigger extends SimpleTrigger {
     /**
      * Constructs a new SimpleTrigger with the given name.
      *
-     * @param name    the name of the service for this trigger.
-     * @param context
      * @param holder
      */
-    public TimeRangeTrigger(String name, Context context, ContextAPI holder, List<Map<String, String>> timeRanges) {
-        super(name, context, holder);
-        mContext = context;
+    public TimeRangeTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
-        mTimeRanges = timeRanges;
+        List<Map<String, String>> timeList = new ArrayList<>();
+        Map<String,String> range_1 = new HashMap<>();
+        range_1.put("from", "22:00:00");
+        range_1.put("to", "23:59:00");
+        timeList.add(range_1);
+        mTimeRanges = timeList;
+        mNotificationTitle = "Time Range Notification";
+        mNotificationMessage = "Time within range";
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("Time Range Notification")
-                        .setContentText("Time within range");
-        int mNotificationId = 004;
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    public String getNotificationTitle() {
+        return mNotificationTitle;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return mNotificationMessage;
     }
 
     @Override

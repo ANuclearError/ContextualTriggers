@@ -11,35 +11,31 @@ import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-/**
- * Created by Kristine on 18/04/2017.
- */
 
 public class StepsWeatherCompositeTrigger extends CompositeTrigger {
 
-
-    private Context mContext;
     private ContextAPI mContextHolder;
     private List<Trigger> mTriggers;
+    private String mNotificationTitle;
+    private String mNotificationMessage;
 
-    StepsWeatherCompositeTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-        super(triggers, c, holder);
-        mContext = c;
+    StepsWeatherCompositeTrigger(List<Trigger> triggers, ContextAPI holder) {
+        super(triggers, holder);
+
         mContextHolder = holder;
         mTriggers = triggers;
+        mNotificationTitle = "Steps & Weather Trigger";
+        mNotificationMessage = "The weather is nice, go for a walk!";
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("Steps & Weather Trigger") // to do
-                        .setContentText("The weather is nice, go for a walk!"); // to do
-        int mNotificationId = 003;
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    public String getNotificationTitle() {
+        return mNotificationTitle;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return mNotificationMessage;
     }
 
     @Override

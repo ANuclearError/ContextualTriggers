@@ -56,23 +56,20 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
      * @param c  the context of the service
      * @param holder  the data holder
      */
-    EmptyCalendarWeatherTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-        super(triggers, c, holder);
+    EmptyCalendarWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {
+        super(triggers, holder);
         mTriggers = triggers;
-        mContext = c;
         mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle(NOTIFICATION_TITLE) // to do
-                        .setContentText(NOTIFICATION_TEXT);
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return NOTIFICATION_TEXT;
     }
 
     @Override

@@ -35,7 +35,6 @@ public class FoursquareTrigger extends SimpleTrigger {
      * @param context
      */
 
-    private Context mContext;
     private ContextAPI mContextHolder;
     private String mNotificationTitle;
     private String mNotificationMessage;
@@ -44,24 +43,20 @@ public class FoursquareTrigger extends SimpleTrigger {
     private double mRecentVisitThreshold = 90;
     private int categoryVisitThreshold = 10;
 
-    public FoursquareTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        mContext = context;
+    public FoursquareTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
         mRecentLocations = new ArrayList<>();
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle(mNotificationTitle)
-                        .setContentText(mNotificationMessage);
-        int mNotificationId = 006;
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    public String getNotificationTitle() {
+        return mNotificationTitle;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return mNotificationMessage;
     }
 
     @Override
@@ -83,7 +78,7 @@ public class FoursquareTrigger extends SimpleTrigger {
             JSONObject nearbyJson = new JSONObject(nearby).getJSONObject("response");
             JSONArray jsonArray = nearbyJson.getJSONArray("venues");
 
-            SharedPreferences commonLocations = mContext.getSharedPreferences("locationPrefs", 0);
+            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
 
             if(jsonArray.length() != 0){
 
@@ -130,7 +125,7 @@ public class FoursquareTrigger extends SimpleTrigger {
             String venueName = venues.getJSONObject(0)
                     .getString("name");
 
-            SharedPreferences commonLocations = mContext.getSharedPreferences("locationPrefs", 0);
+            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
             int categoryTally = commonLocations.getInt(category, -1);
 
             SharedPreferences.Editor editor = commonLocations.edit();

@@ -18,28 +18,27 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class WeatherLocationCompositeTrigger extends CompositeTrigger {
 
-    private Context mContext;
     private ContextAPI mContextHolder;
     private List<Trigger> mTriggers;
+    private String mNotificationTitle;
+    private String mNotificationMessage;
 
-    WeatherLocationCompositeTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-        super(triggers, c, holder);
-        mContext = c;
+    WeatherLocationCompositeTrigger(List<Trigger> triggers, ContextAPI holder) {
+        super(triggers, holder);
         mContextHolder = holder;
         mTriggers = triggers;
+        mNotificationTitle = "Weather & Location Trigger";
+        mNotificationMessage = "You're in a place and the weather is good.";
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle("Weather & Location Trigger")
-                        .setContentText("You're in a place and the weather is good.");
-        int mNotificationId = 003;
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    public String getNotificationTitle() {
+        return mNotificationTitle;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return mNotificationMessage;
     }
 
     @Override

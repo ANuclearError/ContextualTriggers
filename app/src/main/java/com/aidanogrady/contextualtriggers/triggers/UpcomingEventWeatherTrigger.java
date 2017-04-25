@@ -47,16 +47,21 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
      * Constructs a new CompositeTrigger.
      *
      * @param triggers  the triggers that comprise of this trigger
-     * @param c  the context of the service
      * @param holder  the data holder
      */
-    UpcomingEventWeatherTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-        super(triggers, c, holder);
+    UpcomingEventWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {
+        super(triggers, holder);
+
     }
 
     @Override
-    public void notifyUser() {
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
+    }
 
+    @Override
+    public String getNotificationMessage() {
+        return NOTIFICATION_TEXT;
     }
 
     @Override

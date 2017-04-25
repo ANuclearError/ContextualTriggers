@@ -77,7 +77,7 @@ public class ContextUpdateManager extends Service {
 
 
         invokedServices = new ArrayList<>();
-        contextHolder = new ContextHolder();
+        contextHolder = new ContextHolder(this);
         triggerManager = new TriggerManager(this, contextHolder);
 
         setupAlarm();

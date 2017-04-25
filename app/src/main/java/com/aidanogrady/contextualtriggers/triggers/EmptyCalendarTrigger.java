@@ -53,27 +53,21 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
     /**
      * Constructs a new SimpleTrigger with the given name.
      *
-     * @param name    the name of the service for this trigger
-     * @param context the Android context for calling intents etc
      * @param holder  the data source holder for accessing data
      */
-    EmptyCalendarTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        this.mName = name;
-        this.mContext = context;
+    EmptyCalendarTrigger(ContextAPI holder) {
+        super(holder);
         this.mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.basic_notification_icon)
-                        .setContentTitle(NOTIFICATION_TITLE) // to do
-                        .setContentText(NOTIFICATION_TEXT);
-        NotificationManager mNotifyMgr =
-                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return NOTIFICATION_TEXT;
     }
 
     @Override

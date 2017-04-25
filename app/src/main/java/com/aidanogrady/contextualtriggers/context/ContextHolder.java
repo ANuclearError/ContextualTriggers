@@ -3,6 +3,7 @@ package com.aidanogrady.contextualtriggers.context;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
@@ -17,12 +18,9 @@ import java.util.Map;
 
 import static android.content.Context.BATTERY_SERVICE;
 
-/**
- * Created by Kristine on 15/04/2017.
- */
-
 public class ContextHolder implements ContextAPI {
 
+    private Context mContext;
     private int steps;
     private Map<String, Double> location;
     private String weatherMain;
@@ -30,12 +28,13 @@ public class ContextHolder implements ContextAPI {
     private String nearbyFoursquareData;
     private List<CalendarEvent> calendarEvents;
 
-    public ContextHolder() {
+    public ContextHolder(Context context) {
         // set default values
-        this.steps = -1;
+        this.mContext = context;
+        this.steps = Integer.MAX_VALUE;
         this.location = new HashMap<>();
-        this.weatherMain = "None";
-        this.weatherId = "None";
+        this.weatherMain = null;
+        this.weatherId = null;
         this.calendarEvents = null;
     }
 
@@ -79,13 +78,13 @@ public class ContextHolder implements ContextAPI {
 
     }
 
-    public int getBatteryLevel(Context context){
+    public int getBatteryLevel(){
 //        BatteryManager bm = (BatteryManager) context.getSystemService(BATTERY_SERVICE);
 //        int batteryLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 //
 //        System.out.println("BATTERY LEVEL: " + batteryLevel);
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        Intent batteryStatus = mContext.registerReceiver(null, ifilter);
 
         if (batteryStatus != null) {
 
@@ -111,6 +110,11 @@ public class ContextHolder implements ContextAPI {
     @Override
     public List<CalendarEvent> getTodaysEvents() {
         return calendarEvents;
+    }
+
+    @Override
+    public SharedPreferences getSharedPreferences(String fileName) {
+        return mContext.getSharedPreferences(fileName, 0);
     }
 
     public void setTodaysEvents(List<CalendarEvent> events) {

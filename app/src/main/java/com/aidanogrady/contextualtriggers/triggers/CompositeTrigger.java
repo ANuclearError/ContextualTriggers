@@ -25,12 +25,9 @@ abstract class CompositeTrigger implements Trigger {
     /**
      * Constructs a new CompositeTrigger.
      */
-    CompositeTrigger(List<Trigger> triggers, Context c, ContextAPI holder) {
-
+    CompositeTrigger(List<Trigger> triggers, ContextAPI holder) {
         mTriggers = triggers;
-        mContext = c;
         mHolder = holder;
-        mTriggers = new ArrayList<>();
     }
 
     @Override

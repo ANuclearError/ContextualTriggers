@@ -22,15 +22,19 @@ public class StepsTrigger extends SimpleTrigger {
     private int midSteps = 5000;
     private int highSteps = 10000;
 
-    StepsTrigger(String name, Context context, ContextAPI holder) {
-        super(name, context, holder);
-        mContext = context;
+    StepsTrigger(ContextAPI holder) {
+        super(holder);
         mContextHolder = holder;
     }
 
     @Override
-    public void notifyUser() {
-        // make notification
+    public String getNotificationTitle() {
+        return null;
+    }
+
+    @Override
+    public String getNotificationMessage() {
+        return null;
     }
 
 //    @Override
@@ -55,6 +59,6 @@ public class StepsTrigger extends SimpleTrigger {
 
     @Override
     public Boolean isTriggered() {
-        return null;
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package com.aidanogrady.contextualtriggers.context;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
@@ -24,10 +25,12 @@ public interface ContextAPI  {
 
     Date getCurrentTime() throws ParseException;
 
-    int getBatteryLevel(Context context);
+    int getBatteryLevel();
 
     String getNearbyFoursquareData();
 
     List<CalendarEvent> getTodaysEvents();
+
+    SharedPreferences getSharedPreferences(String fileName);
 
 }
