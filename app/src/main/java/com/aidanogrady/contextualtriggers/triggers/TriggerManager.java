@@ -46,6 +46,16 @@ public class TriggerManager {
                 emptyCalendarWeatherTriggers,
                 mContextHolder);
 
+        Trigger upcomingEventTrigger = new UpcomingEventTrigger(
+                mContextHolder);
+
+        List<Trigger> upcomingEventWeatherTriggerList = new ArrayList<>();
+        upcomingEventWeatherTriggerList.add(upcomingEventTrigger);
+        upcomingEventWeatherTriggerList.add(goodWeatherTrigger);
+        Trigger upcomingEventWeatherTrigger = new UpcomingEventWeatherTrigger(
+                upcomingEventWeatherTriggerList,
+                mContextHolder);
+
         //Triggers
         mTriggers.add(batteryTrigger);
         mTriggers.add(timeRangeTrigger);
@@ -53,8 +63,8 @@ public class TriggerManager {
         mTriggers.add(weatherLocationComposite);
         mTriggers.add(foursquareTrigger);
         mTriggers.add(goodWeatherTrigger);
-        mTriggers.add(emptyCalendarTrigger);
         mTriggers.add(emptyCalendarWeatherTrigger);
+        mTriggers.add(upcomingEventWeatherTrigger);
     }
 
     public void update(){
