@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 import com.aidanogrady.contextualtriggers.R;
+import com.aidanogrady.contextualtriggers.context.Geofences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,11 +28,8 @@ import com.permissioneverywhere.PermissionEverywhere;
 import com.permissioneverywhere.PermissionResponse;
 import com.permissioneverywhere.PermissionResultCallback;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,8 +40,7 @@ import java.util.List;
  */
 public class LocationDataSource extends IntentService implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        PermissionResultCallback {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LocationDS";
 
@@ -58,22 +54,17 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private LocationRequest mLocationRequest;
 
-    private boolean mRequestInProgress;
-
     private boolean mIsServicesAvailable;
 
-    // geofencing
+    // Geofences
 
     private List<Geofence> mGeofenceList;
 
-    private static final int GEOFENCE_RADIUS = 150;
+    private static final int GEOFENCE_RADIUS = 5;
 
     private PendingIntent mGeofencePendingIntent;
 
-    /**
-     * The last recorded location recorded.
-     */
-    private Location mLocation;
+    private boolean mListening;
 
     public LocationDataSource() {
         super("LocationDataSource");
@@ -84,56 +75,58 @@ public class LocationDataSource extends IntentService implements LocationListene
         super.onCreate();
 
         System.out.println("Creating location data source service");
-        mRequestInProgress = false;
 
-//        mLocationRequest = LocationRequest.create();
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setMaxWaitTime(MAX_WAIT_TIME);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
         mIsServicesAvailable = isServicesConnected();
-
-        setUpLocationClientIfNeeded();
 
         mGeofenceList = new ArrayList<>();
         mGeofencePendingIntent = null;
     }
 
+    private boolean isServicesConnected() {
+        int res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        return ConnectionResult.SUCCESS == res;
+    }
+
+
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
+        Bundle bundle = null;
+        if (intent != null) {
+            bundle = intent.getExtras();
+        }
+        if (bundle != null) {
+            Log.e(TAG, "in on handle intent");
+            if (intent.hasExtra("Geofences")) {
+                Geofences geofence
+                        = intent.getParcelableExtra("Geofences");
+                createGeofence(geofence);
+                addGeofences();
 
-        if (!mIsServicesAvailable || mGoogleApiClient.isConnected() || mRequestInProgress) {
-            return START_STICKY;
+            }
         }
 
-        setUpLocationClientIfNeeded();
-        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !mRequestInProgress) {
-            mRequestInProgress = true;
-            mGoogleApiClient.connect();
-        }
         return START_STICKY;
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.e(TAG,"in on handle intent");
-        Log.e(TAG,intent.hasExtra("Geofence")+"");
-        if (intent.hasExtra("Geofence")) {
-            com.aidanogrady.contextualtriggers.context.Geofence geofence
-                    = intent.getParcelableExtra("Geofence");
-            createGeofence(geofence);
-            addGeofences();
-
-        }
+        startListenerUpdates();
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocation = location;
-
         Log.e(TAG, "on Location Changed triggered: "
                 + "lat " + location.getLatitude() + " long" + location.getLongitude());
 
@@ -157,72 +150,40 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     public void onConnected(Bundle bundle) {
-        PermissionEverywhere.getPermission(getApplicationContext(),
-                new String[] {
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                },
-                1,
-                "Contextual Triggers",
-                "This service needs location permissions",
-                R.mipmap.ic_launcher)
-                .enqueue(this);
-
-        System.out.println("Notification worked");
+        startListenerUpdates();
+        Intent intent = new Intent(this, ContextUpdateManager.class);
+        intent.putExtra("DataSource", "Connected");
+        startService(intent);
+        mIsServicesAvailable = isServicesConnected();
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        mRequestInProgress = false;
-        mGoogleApiClient = null;
-    }
+    public void onConnectionSuspended(int i) { }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mRequestInProgress = false;
-        if (connectionResult.hasResolution()) {
-            System.out.println("Figure this out later");
-            Toast.makeText(getApplicationContext(),
-                    ("connection failed"),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) { }
 
-
-    private boolean isServicesConnected() {
-        int res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        return ConnectionResult.SUCCESS == res;
-    }
-
-    private void setUpLocationClientIfNeeded() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-    }
-
-    @Override
-    public void onComplete(PermissionResponse permissionResponse) {
+    public void startListenerUpdates() {
         boolean coarse = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean fine = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if (fine && coarse) {
+        System.out.println("Checking permissions");
+        System.out.println("Listening: " + mListening);
+        if (fine && coarse && !mListening) {
             System.out.println("Permissions granted");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                     mLocationRequest,
                     this);
-
+            mListening = true;
         }
+        System.out.println("Listening: " + mListening);
     }
 
-    // Geofencing stuff below
+    // Geofences methods below
 
-    private void createGeofence(com.aidanogrady.contextualtriggers.context.Geofence geofence) {
+    private void createGeofence(Geofences geofence) {
         mGeofenceList.add(new Geofence.Builder()
                             .setRequestId(geofence.getName())
                             .setCircularRegion(
@@ -232,13 +193,17 @@ public class LocationDataSource extends IntentService implements LocationListene
                             )
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                                Geofence.GEOFENCE_TRANSITION_DWELL |
                                                 Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .setLoiteringDelay(1000)
                             .build());
     }
 
     private GeofencingRequest getGeofencingRequest() {
         return new GeofencingRequest.Builder()
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER |
+                        GeofencingRequest.INITIAL_TRIGGER_DWELL |
+                        GeofencingRequest.INITIAL_TRIGGER_EXIT)
                 .addGeofences(mGeofenceList)
                 .build();
     }
