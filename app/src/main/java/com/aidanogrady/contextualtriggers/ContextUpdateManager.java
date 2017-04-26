@@ -16,6 +16,8 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
+import com.aidanogrady.contextualtriggers.context.DBHelper;
+import com.aidanogrady.contextualtriggers.context.Geofence;
 import com.aidanogrady.contextualtriggers.context.data.ActivityRecognitionDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
@@ -28,6 +30,8 @@ import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,10 +53,15 @@ public class ContextUpdateManager extends Service {
 
     private ContextHolder contextHolder;
 
+    private boolean isHomeGeofenceSet = false;
+    private boolean isWorkGeofenceSet = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.e(TAG, "reached service");
+
+        DBHelper.init(getApplicationContext());
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
@@ -80,6 +89,21 @@ public class ContextUpdateManager extends Service {
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder(this);
         triggerManager = new TriggerManager(this, contextHolder);
+
+        // check if home & work location are known
+        Geofence homeGeofence = DBHelper.getGeofence("Home");
+        Geofence workGeofence = DBHelper.getGeofence("Work");
+        if (homeGeofence != null) {
+            Log.e(TAG, "This should not be printed1");
+            isHomeGeofenceSet = true;
+            addGeofence(homeGeofence);
+        }
+        if (workGeofence != null) {
+            Log.e(TAG, "This should not be printed2");
+            isWorkGeofenceSet = true;
+            addGeofence(workGeofence);
+        }
+        Log.e(TAG, "Checked that database is empty");
 
     }
 
@@ -112,7 +136,7 @@ public class ContextUpdateManager extends Service {
                         }
                         break;
                     case "Location":
-                        if (invokedServices.isEmpty()) {
+//                        if (invokedServices.isEmpty()) {
                             double latitude = intent.getDoubleExtra("Latitude", Double.MAX_VALUE);
                             double longitude = intent.getDoubleExtra("Longitude", Double.MAX_VALUE);
 
@@ -137,8 +161,22 @@ public class ContextUpdateManager extends Service {
                                 // add tags of any invoked services here
                                 invokedServices.add(OpenWeatherDataSource.TAG);
                                 invokedServices.add(FoursquareDataSource.TAG);
+
+                                // check if can set any of geofences
+                                if (!isHomeGeofenceSet && isInTimeRange(2,4)) {
+                                    Geofence homeGeofence = new Geofence("Home", latitude, longitude);
+                                    DBHelper.addGeofence(homeGeofence);
+                                    addGeofence(homeGeofence);
+                                    isHomeGeofenceSet = true;
+                                }
+                                if (!isWorkGeofenceSet && isInTimeRange(10,12)) {
+                                    Geofence workGeofence = new Geofence("Work", latitude, longitude);
+                                    DBHelper.addGeofence(workGeofence);
+                                    addGeofence(workGeofence);
+                                    isWorkGeofenceSet = true;
+                                }
                             }
-                        }
+//                        }
                         break;
                     case "Weather":
                         WeatherResult result = intent.getParcelableExtra(WeatherResult.TAG);
@@ -172,7 +210,23 @@ public class ContextUpdateManager extends Service {
         return START_STICKY;
     }
 
+    private boolean isInTimeRange(int from, int to) {
+        Log.e(TAG, "Checking time range " + from + " " + to);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        Log.e(TAG, "Current value " + calendar.get(Calendar.HOUR_OF_DAY)
+                + ":" + calendar.get(Calendar.MINUTE)
+                +":"+calendar.get(Calendar.SECOND));
 
+        return calendar.get(Calendar.HOUR_OF_DAY) >= from
+                && calendar.get(Calendar.HOUR_OF_DAY) <= to;
+    }
+
+    private void addGeofence(Geofence geofence) {
+        Intent locationIntent = new Intent(this, LocationDataSource.class);
+        locationIntent.putExtra("Geofence", geofence);
+        startService(locationIntent);
+    }
 
     @Nullable @Override
     public IBinder onBind(Intent intent) {
