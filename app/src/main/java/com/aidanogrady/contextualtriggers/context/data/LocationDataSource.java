@@ -30,7 +30,9 @@ import com.permissioneverywhere.PermissionResultCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,7 +52,7 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private static final long FASTEST_INTERVAL = 15 * 1000; // 30 * 60 * 1000
 
-    private static final long MAX_WAIT_TIME = 5 * UPDATE_INTERVAL;
+    private static final long MAX_WAIT_TIME =  UPDATE_INTERVAL;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -94,6 +96,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         mIsServicesAvailable = isServicesConnected();
 
         setUpLocationClientIfNeeded();
+
+        mGeofenceList = new ArrayList<>();
+        mGeofencePendingIntent = null;
     }
 
     @Override
@@ -114,6 +119,15 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.e(TAG,"in on handle intent");
+        Log.e(TAG,intent.hasExtra("Geofence")+"");
+        if (intent.hasExtra("Geofence")) {
+            com.aidanogrady.contextualtriggers.context.Geofence geofence
+                    = intent.getParcelableExtra("Geofence");
+            createGeofence(geofence);
+            addGeofences();
+
+        }
     }
 
     @Override
@@ -122,6 +136,12 @@ public class LocationDataSource extends IntentService implements LocationListene
 
         Log.e(TAG, "on Location Changed triggered: "
                 + "lat " + location.getLatitude() + " long" + location.getLongitude());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(location.getTime());
+        Log.e(TAG, "Current location time " + calendar.get(Calendar.HOUR_OF_DAY)
+                + ":" + calendar.get(Calendar.MINUTE)
+                +":"+calendar.get(Calendar.SECOND));
 
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Location");
@@ -203,12 +223,12 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     // Geofencing stuff below
 
-    private void createGeofence(String id, double latitude, double longitude) {
+    private void createGeofence(com.aidanogrady.contextualtriggers.context.Geofence geofence) {
         mGeofenceList.add(new Geofence.Builder()
-                            .setRequestId(id)
+                            .setRequestId(geofence.getName())
                             .setCircularRegion(
-                                    latitude,
-                                    longitude,
+                                    geofence.getLatitude(),
+                                    geofence.getLongitude(),
                                     GEOFENCE_RADIUS
                             )
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)
