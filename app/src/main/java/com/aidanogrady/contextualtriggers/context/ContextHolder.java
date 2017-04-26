@@ -20,7 +20,6 @@ import java.util.List;
 public class ContextHolder implements ContextAPI {
 
     private Context mContext;
-    private int steps;
     private Pair<Double, Double> location;
     private WeatherResult weatherForecast;
     private FoursquareResult nearbyFoursquareData;
@@ -28,9 +27,7 @@ public class ContextHolder implements ContextAPI {
 
     public ContextHolder(Context context) {
         // set default values
-
         this.mContext = context;
-        this.steps = Integer.MAX_VALUE;
         this.location = null;
         this.weatherForecast = null;
         this.calendarEvents = null;
@@ -42,13 +39,25 @@ public class ContextHolder implements ContextAPI {
     }
 
     @Override
-    public int getSteps() {
-        return steps;
+    public int getSteps(long date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return DBHelper.getSteps(cal.getTimeInMillis());
     }
 
 
-    public void setSteps(int steps) {
-        this.steps = steps;
+    public void addSteps(int steps) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        steps += DBHelper.getSteps(cal.getTimeInMillis());
+        DBHelper.addSteps(cal.getTimeInMillis(), steps);
     }
 
     public void setLocation(Pair<Double, Double> location) {

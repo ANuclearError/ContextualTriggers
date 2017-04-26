@@ -190,7 +190,8 @@ public class FoursquareDataSource extends IntentService {
                 sendResult(venueList);
 
             } catch (Exception e) {
-                System.out.println("An exception happened: " + e);
+                System.out.println("Fouresquare: An exception happened: " + e);
+                sendResult(new ArrayList<FoursquareVenue>());
             }
         }
     }
