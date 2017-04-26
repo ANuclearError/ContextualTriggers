@@ -81,19 +81,6 @@ public class ContextUpdateManager extends Service {
         contextHolder = new ContextHolder(this);
         triggerManager = new TriggerManager(this, contextHolder);
 
-        setupAlarm();
-
-    }
-
-    private void setupAlarm() {
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent serviceInvoker = new Intent(this, ServiceInvoker.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, serviceInvoker, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // set alarm
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-               AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
-
     }
 
     @Override
