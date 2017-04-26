@@ -35,15 +35,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Kristine on 14/04/2017.
+ * The ContextUpdateManager is an Android service that is used to manage the data sources
+ * and handle any updates that they may send.
  */
-
 public class ContextUpdateManager extends Service {
 
     private static final String TAG = "ContextUpdateManager";
-
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
 
     private TriggerManager triggerManager;
 
