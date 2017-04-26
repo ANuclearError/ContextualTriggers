@@ -137,12 +137,12 @@ public class ContextUpdateManager extends Service {
                 String source = intent.getStringExtra("DataSource");
                 switch (source) {
                     case "Steps":
-                        int steps = intent.getIntExtra("Count",0);
+                        int steps = intent.getIntExtra("Count", 0);
                         if (steps == -1) {
                             // should we handle if no step counter available?
                             // is so, should we use gps and calculate average steps?
                         } else {
-                            contextHolder.setSteps(steps);
+                            contextHolder.addSteps(steps);
                             Toast.makeText(getApplicationContext(),
                                             ("Steps: " + steps),
                                             Toast.LENGTH_LONG).show();
@@ -162,6 +162,7 @@ public class ContextUpdateManager extends Service {
                             if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
                                     && activeNetwork.isConnected()) {
 
+                                System.out.println("Getting weather data");
                                 Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);
                                 weatherIntent.putExtra("Longitude", longitude);

@@ -38,6 +38,7 @@ public class OpenWeatherDataSource extends IntentService {
      * @return  the corresponding weather forecast.
      */
     public static WeatherForecast convertWeatherId(int id) {
+        System.out.println("Weather id: " + id);
         if (id >= 200 && id < 300)
             return WeatherForecast.THUNDERSTORM;
         if (id >= 300 && id < 400)
@@ -72,6 +73,7 @@ public class OpenWeatherDataSource extends IntentService {
                 String str_lat = Double.toString(latitude);
                 String str_lon = Double.toString(longitude);
 
+                System.out.println("OpenWeatherDataSource: making request");
                 WeatherDataRequester requester = new WeatherDataRequester(str_lat, str_lon);
                 new Thread(requester).start();
             }
@@ -93,6 +95,7 @@ public class OpenWeatherDataSource extends IntentService {
         WeatherResult result = WeatherResult.CREATOR.createFromParcel(parcel);
         parcel.recycle();
 
+        System.out.println("OpenWeatherDataSource: " + result);
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Weather");
         intent.putExtra(WeatherResult.TAG, result);
@@ -156,6 +159,7 @@ public class OpenWeatherDataSource extends IntentService {
                 weatherConnection.setDoOutput(true);
                 weatherConnection.connect();
 
+                System.out.println("OpenWeatherDataSource: request sent");
                 StringBuilder buffer = new StringBuilder();
                 InputStream stream = weatherConnection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(stream));
@@ -177,6 +181,7 @@ public class OpenWeatherDataSource extends IntentService {
 
         private void handleResult(JSONObject result) {
             try {
+                System.out.println("OpenWeatherDataSource: handling result");
                 JSONArray array = result.getJSONArray(WEATHER_TAG);
                 int statusCode = (int) array.getJSONObject(0).get(ID_TAG);
                 WeatherForecast forecast = OpenWeatherDataSource.convertWeatherId(statusCode);

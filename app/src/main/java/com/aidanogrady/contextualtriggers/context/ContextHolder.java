@@ -46,8 +46,14 @@ public class ContextHolder implements ContextAPI {
     }
 
 
-    public void setSteps(int steps) {
-        this.steps = steps;
+    public void addSteps(int steps) {
+        this.steps += steps;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        DBHelper.addSteps(cal.getTimeInMillis(), steps);
     }
 
     public void setLocation(Pair<Double, Double> location) {

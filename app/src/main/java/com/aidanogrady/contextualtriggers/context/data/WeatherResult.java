@@ -100,4 +100,14 @@ public class WeatherResult implements Parcelable {
     public double getHumidity() {
         return mHumidity;
     }
+
+    @Override
+    public String toString() {
+        return "WeatherResult{" +
+                "mForecast=" + mForecast +
+                ", mTemperature=" + mTemperature +
+                ", mWindSpeed=" + mWindSpeed +
+                ", mHumidity=" + mHumidity +
+                '}';
+    }
 }

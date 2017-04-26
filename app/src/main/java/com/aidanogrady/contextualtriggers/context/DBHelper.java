@@ -10,7 +10,6 @@ import android.util.Log;
 /**
  * Created by Kristine on 25/04/2017.
  */
-
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TAG = "DBHelper";
@@ -27,6 +26,10 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String GEOFENCE_COLUMN_LATITUDE = "Latitude";
     private static final String GEOFENCE_COLUMN_LONGITUDE = "Longitude";
 
+    private static final String STEPS_TABLE_NAME = "Steps";
+    private static final String STEPS_COLUMN_DATE = "Date";
+    private static final String STEPS_COLUMN_STEPS = "Steps";
+
     private static final String CREATE_GEOFENCE_TABLE_STMT =
             "CREATE TABLE " + GEOFENCE_TABLE_NAME + "( "
             + GEOFENCE_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -34,8 +37,19 @@ public class DBHelper extends SQLiteOpenHelper {
             + GEOFENCE_COLUMN_LATITUDE + " REAL NOT NULL, "
             + GEOFENCE_COLUMN_LONGITUDE + " REAL NOT NULL "
             + ");";
+
+    private static final String CREATE_STEPS_TABLE_STMT =
+            "CREATE TABLE " + STEPS_TABLE_NAME + "( "
+            + STEPS_COLUMN_DATE + " INTEGER PRIMARY KEY, "
+            + STEPS_COLUMN_STEPS + " INTEGER DEFAULT 0"
+            + ");";
+
     private static final String GEOFENCE_DROP_TABLE_STMT =
             "DROP TABLE IF EXISTS " + GEOFENCE_TABLE_NAME;
+
+    private static final String STEPS_DROP_TABLE_STMT =
+            "DROP TABLE IF EXISTS " + STEPS_TABLE_NAME;
+
 
     private DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -51,12 +65,14 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_GEOFENCE_TABLE_STMT);
+        db.execSQL(CREATE_STEPS_TABLE_STMT);
         Log.e("DB", "table created");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(GEOFENCE_DROP_TABLE_STMT);
+        db.execSQL(STEPS_TABLE_NAME);
         onCreate(db);
     }
 
@@ -84,5 +100,31 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void deleteGeofence(String geofenceName) {}
 
+    public static void addSteps(long date, int steps) {
+        SQLiteDatabase db = instance.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(STEPS_COLUMN_DATE, date);
+        values.put(STEPS_COLUMN_STEPS, steps);
+        db.replace(STEPS_TABLE_NAME, null, values);
+    }
 
+    public static int getSteps(long date) {
+        SQLiteDatabase db = instance.getReadableDatabase();
+
+        String[] projection = {
+                STEPS_COLUMN_STEPS
+        };
+        String selection = STEPS_COLUMN_DATE + " = ";
+        String[] args = new String[] {String.valueOf(date)};
+
+        Cursor c = db.query(STEPS_TABLE_NAME, projection, selection, args, null, null, null);
+
+        int steps = 0;
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            steps = c.getInt(c.getColumnIndex(STEPS_COLUMN_STEPS));
+            c.close();
+        }
+        return steps;
+    }
 }

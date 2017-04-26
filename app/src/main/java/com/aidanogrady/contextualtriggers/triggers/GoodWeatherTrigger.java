@@ -55,6 +55,9 @@ public class GoodWeatherTrigger extends SimpleTrigger {
     @Override
     public Boolean isTriggered() {
         mForeCast = mContextHolder.getWeatherForecast();
+        if (mForeCast == null)
+            return false;
+
         switch (mForeCast.getForecast()) {
             case CLEAR:
             case CLOUDY:

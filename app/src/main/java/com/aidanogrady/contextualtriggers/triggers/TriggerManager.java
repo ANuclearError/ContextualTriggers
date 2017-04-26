@@ -60,7 +60,7 @@ public class TriggerManager {
 //        mTriggers.add(locationTrigger);
 //        mTriggers.add(weatherLocationComposite);
 //        mTriggers.add(foursquareTrigger);
-//        mTriggers.add(goodWeatherTrigger);
+        mTriggers.add(goodWeatherTrigger);
 //        mTriggers.add(emptyCalendarWeatherTrigger);
 //        mTriggers.add(upcomingEventWeatherTrigger);
     }

@@ -18,9 +18,18 @@ import com.aidanogrady.contextualtriggers.ContextUpdateManager;
  */
 
 public class StepCounter extends Service implements SensorEventListener {
-
     private static final String TAG = "StepCounter";
-    private int lastSteps = -1;
+
+    /**
+     * The number of steps to be walked for the counter to send an intent.
+     */
+    private static final int THRESHOLD = 50;
+
+    /**
+     * The total number of steps walked since booting.
+     */
+    private int mTotalStepsSinceBoot;
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -51,13 +60,15 @@ public class StepCounter extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         int steps = (int) event.values[0];
-        Log.e(TAG, "steps: " + steps);
-        Intent intent = new Intent(this, ContextUpdateManager.class);
-        intent.putExtra("DataSource", "Steps");
-        intent.putExtra("Count", steps);
-        startService(intent);
 
-        lastSteps = steps;
+        int diff = steps - mTotalStepsSinceBoot;
+        if (diff > THRESHOLD) {
+            mTotalStepsSinceBoot = steps;
+            Intent intent = new Intent(this, ContextUpdateManager.class);
+            intent.putExtra("DataSource", "Steps");
+            intent.putExtra("Count", diff);
+            startService(intent);
+        }
     }
 
 
