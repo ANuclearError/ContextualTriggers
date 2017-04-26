@@ -14,7 +14,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String TAG = "DBHelper";
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 3;
     public static final String DB_NAME = "ContextualTriggers.db";
 
     private static DBHelper instance;
@@ -72,7 +72,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(GEOFENCE_DROP_TABLE_STMT);
-        db.execSQL(STEPS_TABLE_NAME);
+        db.execSQL(STEPS_DROP_TABLE_STMT);
         onCreate(db);
     }
 
@@ -101,6 +101,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteGeofence(String geofenceName) {}
 
     public static void addSteps(long date, int steps) {
+        System.out.println("Adding " + steps + " to " + date);
         SQLiteDatabase db = instance.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(STEPS_COLUMN_DATE, date);
@@ -114,7 +115,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] projection = {
                 STEPS_COLUMN_STEPS
         };
-        String selection = STEPS_COLUMN_DATE + " = ";
+        String selection = STEPS_COLUMN_DATE + " LIKE ?";
         String[] args = new String[] {String.valueOf(date)};
 
         Cursor c = db.query(STEPS_TABLE_NAME, projection, selection, args, null, null, null);

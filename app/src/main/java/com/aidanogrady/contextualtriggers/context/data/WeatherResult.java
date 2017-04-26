@@ -24,14 +24,14 @@ public class WeatherResult implements Parcelable {
     private double mTemperature;
 
     /**
+     * The forecase humidity.
+     */
+    private int mHumidity;
+
+    /**
      * The wind speed of the forecast.
      */
     private double mWindSpeed;
-
-    /**
-     * The forecase humidity.
-     */
-    private double mHumidity;
 
     public static final Creator<WeatherResult> CREATOR = new Creator<WeatherResult>() {
         @Override
@@ -48,8 +48,8 @@ public class WeatherResult implements Parcelable {
     private WeatherResult(Parcel in) {
         mForecast = WeatherForecast.valueOf(in.readString());
         mTemperature = in.readDouble();
+        mHumidity = in.readInt();
         mWindSpeed = in.readDouble();
-        mHumidity = in.readDouble();
     }
 
     @Override
@@ -59,10 +59,10 @@ public class WeatherResult implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mForecast.toString());
+        dest.writeString(mForecast.name());
         dest.writeDouble(mTemperature);
+        dest.writeInt(mHumidity);
         dest.writeDouble(mWindSpeed);
-        dest.writeDouble(mHumidity);
     }
 
     /**
@@ -97,7 +97,7 @@ public class WeatherResult implements Parcelable {
      *
      * @return  humidity
      */
-    public double getHumidity() {
+    public int getHumidity() {
         return mHumidity;
     }
 

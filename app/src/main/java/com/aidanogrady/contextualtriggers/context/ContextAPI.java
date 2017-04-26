@@ -19,7 +19,7 @@ public interface ContextAPI  {
 
     Pair<Double, Double> getLocation();
 
-    int getSteps();
+    int getSteps(long date);
 
     WeatherResult getWeatherForecast();
 

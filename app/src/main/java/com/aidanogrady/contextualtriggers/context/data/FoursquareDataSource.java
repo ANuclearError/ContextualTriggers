@@ -149,7 +149,7 @@ public class FoursquareDataSource extends IntentService {
                 onSensorChanged(nearbyLocationsString);
 
             } catch (Exception e) {
-                System.out.println("An exception happened: " + e);
+                System.out.println("Fouresquare: An exception happened: " + e);
                 onSensorChanged(null);
             }
         }

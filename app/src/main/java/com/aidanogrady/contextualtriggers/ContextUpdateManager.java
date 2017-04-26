@@ -130,9 +130,7 @@ public class ContextUpdateManager extends Service {
                             // is so, should we use gps and calculate average steps?
                         } else {
                             contextHolder.addSteps(steps);
-                            Toast.makeText(getApplicationContext(),
-                                            ("Steps: " + steps),
-                                            Toast.LENGTH_LONG).show();
+                            System.out.println("Updated steps");
                         }
                         break;
                     case "Location":

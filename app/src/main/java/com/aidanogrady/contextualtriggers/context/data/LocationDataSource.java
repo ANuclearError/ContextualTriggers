@@ -258,9 +258,9 @@ public class LocationDataSource extends IntentService implements LocationListene
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (fine && coarse) {
-            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
-                                    getGeofencingRequest(),
-                                    getGeofencePendingIntent());
+//            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
+//                                    getGeofencingRequest(),
+//                                    getGeofencePendingIntent());
         }
     }
 
