@@ -62,7 +62,7 @@ public class TriggerManager {
         //Triggers
 //        mTriggers.add(batteryTrigger);
 //        mTriggers.add(timeRangeTrigger);
-        mTriggers.add(locationTrigger);
+//        mTriggers.add(locationTrigger);
 //        mTriggers.add(weatherLocationComposite);
         mTriggers.add(foursquareTrigger);
 //        mTriggers.add(goodWeatherTrigger);

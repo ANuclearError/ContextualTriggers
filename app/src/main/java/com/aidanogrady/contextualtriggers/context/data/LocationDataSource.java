@@ -40,8 +40,7 @@ import java.util.List;
  */
 public class LocationDataSource extends IntentService implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        PermissionResultCallback {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "LocationDS";
 
@@ -65,6 +64,8 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private PendingIntent mGeofencePendingIntent;
 
+    private boolean mListening;
+
     public LocationDataSource() {
         super("LocationDataSource");
     }
@@ -81,14 +82,23 @@ public class LocationDataSource extends IntentService implements LocationListene
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setMaxWaitTime(MAX_WAIT_TIME);
 
-        mIsServicesAvailable = isServicesConnected();
-
-        setUpLocationClientIfNeeded();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
         mGoogleApiClient.connect();
+        mIsServicesAvailable = isServicesConnected();
 
         mGeofenceList = new ArrayList<>();
         mGeofencePendingIntent = null;
     }
+
+    private boolean isServicesConnected() {
+        int res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        return ConnectionResult.SUCCESS == res;
+    }
+
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -106,11 +116,14 @@ public class LocationDataSource extends IntentService implements LocationListene
 
             }
         }
+
         return START_STICKY;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {  }
+    protected void onHandleIntent(Intent intent) {
+        startListenerUpdates();
+    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -137,22 +150,11 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     public void onConnected(Bundle bundle) {
-        PermissionEverywhere.getPermission(getApplicationContext(),
-                new String[] {
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                },
-                1,
-                "Contextual Triggers",
-                "This service needs location permissions",
-                R.mipmap.ic_launcher)
-                .enqueue(this);
-
-        System.out.println("Notification worked");
-
+        startListenerUpdates();
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Connected");
         startService(intent);
+        mIsServicesAvailable = isServicesConnected();
     }
 
     @Override
@@ -161,36 +163,22 @@ public class LocationDataSource extends IntentService implements LocationListene
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) { }
 
-
-    private boolean isServicesConnected() {
-        int res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        return ConnectionResult.SUCCESS == res;
-    }
-
-    private void setUpLocationClientIfNeeded() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-    }
-
-    @Override
-    public void onComplete(PermissionResponse permissionResponse) {
+    public void startListenerUpdates() {
         boolean coarse = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         boolean fine = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if (fine && coarse) {
+        System.out.println("Checking permissions");
+        System.out.println("Listening: " + mListening);
+        if (fine && coarse && !mListening) {
             System.out.println("Permissions granted");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                     mLocationRequest,
                     this);
-
+            mListening = true;
         }
+        System.out.println("Listening: " + mListening);
     }
 
     // Geofences methods below
