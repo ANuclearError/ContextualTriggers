@@ -133,7 +133,6 @@ public class LocationDataSource extends IntentService implements LocationListene
                 ("Lat " + location.getLatitude() + "Long "+ location.getLongitude()),
                 Toast.LENGTH_LONG).show();
         System.out.printf("Lat %f Long %f", location.getLatitude(), location.getLongitude());
-
     }
 
     @Override
@@ -236,9 +235,9 @@ public class LocationDataSource extends IntentService implements LocationListene
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (fine && coarse) {
-            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
-                                    getGeofencingRequest(),
-                                    getGeofencePendingIntent());
+//            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
+//                                    getGeofencingRequest(),
+//                                    getGeofencePendingIntent());
         }
     }
 

@@ -83,16 +83,17 @@ public class OpenWeatherDataSource extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
     }
 
-    private void sendResult(WeatherForecast forecast, double temp, double humidity, double wind) {
+    private void sendResult(WeatherForecast forecast, double temp, int humidity, double wind) {
         Parcel parcel = Parcel.obtain();
-        parcel.writeString(forecast.toString());
+        parcel.writeString(forecast.name());
         parcel.writeDouble(temp);
-        parcel.writeDouble(humidity);
+        parcel.writeInt(humidity);
         parcel.writeDouble(wind);
         parcel.setDataPosition(0);
         WeatherResult result = WeatherResult.CREATOR.createFromParcel(parcel);
         parcel.recycle();
 
+        System.out.println("Weather result: " + result);
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Weather");
         intent.putExtra(WeatherResult.TAG, result);
@@ -147,7 +148,8 @@ public class OpenWeatherDataSource extends IntentService {
         public void run() {
             try {
                 String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
-                String PARAMS = "lat=" + mLatitude + "&lon=" + mLongitude +"&APPID=" + APP_ID;
+                String PARAMS = "lat=" + mLatitude + "&lon=" + mLongitude +"&APPID=" + APP_ID +
+                        "&units=metric";
                 URL request = new URL(BASE_URL + PARAMS);
 
                 HttpURLConnection weatherConnection = (HttpURLConnection) request.openConnection();
@@ -171,7 +173,7 @@ public class OpenWeatherDataSource extends IntentService {
 
 
             } catch (Exception e) {
-                System.out.println("An exception happened: " + e);
+                e.printStackTrace();
             }
         }
 
@@ -183,7 +185,7 @@ public class OpenWeatherDataSource extends IntentService {
 
                 JSONObject main = result.getJSONObject(MAIN_TAG);
                 double temperature = (double) main.get(TEMPERATURE_TAG);
-                double humidity = (double) main.get(HUMIDITY_TAG);
+                int humidity = (int) main.get(HUMIDITY_TAG);
 
                 JSONObject wind = result.getJSONObject(WIND_TAG);
                 double windSpeed = (double) wind.get(WIND_SPEED_TAG);
@@ -191,7 +193,7 @@ public class OpenWeatherDataSource extends IntentService {
                 if (forecast != null)
                     sendResult(forecast, temperature, humidity, windSpeed);
             } catch (Exception e) {
-                System.out.println("An exception happened: " + e);
+                e.printStackTrace();
             }
         }
     }

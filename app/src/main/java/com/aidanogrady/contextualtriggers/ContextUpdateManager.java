@@ -24,6 +24,7 @@ import com.aidanogrady.contextualtriggers.context.data.ActivityRecognitionDataSo
 import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
@@ -37,15 +38,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Kristine on 14/04/2017.
+ * The ContextUpdateManager is an Android service that is used to manage the data sources
+ * and handle any updates that they may send.
  */
-
 public class ContextUpdateManager extends Service {
 
     private static final String TAG = "ContextUpdateManager";
-
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
 
     private TriggerManager triggerManager;
 
@@ -92,19 +90,6 @@ public class ContextUpdateManager extends Service {
         contextHolder = new ContextHolder(this);
         triggerManager = new TriggerManager(this, contextHolder);
 
-        setupAlarm();
-
-    }
-
-    private void setupAlarm() {
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent serviceInvoker = new Intent(this, ServiceInvoker.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, serviceInvoker, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // set alarm
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-               AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
-
     }
 
     @Override
@@ -124,15 +109,13 @@ public class ContextUpdateManager extends Service {
                 String source = intent.getStringExtra("DataSource");
                 switch (source) {
                     case "Steps":
-                        int steps = intent.getIntExtra("Count",0);
+                        int steps = intent.getIntExtra("Count", 0);
                         if (steps == -1) {
                             // should we handle if no step counter available?
                             // is so, should we use gps and calculate average steps?
                         } else {
-                            contextHolder.setSteps(steps);
-                            Toast.makeText(getApplicationContext(),
-                                            ("Steps: " + steps),
-                                            Toast.LENGTH_LONG).show();
+                            contextHolder.addSteps(steps);
+                            System.out.println("Updated steps");
                         }
                         break;
                     case "Location":
@@ -149,6 +132,7 @@ public class ContextUpdateManager extends Service {
                             if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
                                     && activeNetwork.isConnected()) {
 
+                                System.out.println("Getting weather data");
                                 Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);
                                 weatherIntent.putExtra("Longitude", longitude);
@@ -184,7 +168,7 @@ public class ContextUpdateManager extends Service {
                         invokedServices.remove(OpenWeatherDataSource.TAG);
                         break;
                     case "Foursquare":
-                        String nearby = intent.getStringExtra("nearby");
+                        FoursquareResult nearby = intent.getParcelableExtra("nearby");
                         contextHolder.setNearbyFoursquareData(nearby);
                         invokedServices.remove(FoursquareDataSource.TAG);
                         break;

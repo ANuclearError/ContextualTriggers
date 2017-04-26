@@ -56,7 +56,6 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
      * Constructs a new CompositeTrigger.
      *
      * @param triggers  the triggers that comprise of this trigger
-     * @param c  the context of the service
      * @param holder  the data holder
      */
     EmptyCalendarWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {

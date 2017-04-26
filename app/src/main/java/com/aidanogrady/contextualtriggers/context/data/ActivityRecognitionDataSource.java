@@ -1,6 +1,5 @@
 package com.aidanogrady.contextualtriggers.context.data;
 
-import android.Manifest;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -17,13 +16,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
-import com.permissioneverywhere.PermissionEverywhere;
 
 import java.util.List;
-
-/**
- * Created by Kristine on 20/04/2017.
- */
 
 public class ActivityRecognitionDataSource extends IntentService
         implements  GoogleApiClient.ConnectionCallbacks,

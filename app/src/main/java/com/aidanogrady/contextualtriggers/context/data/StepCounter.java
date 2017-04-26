@@ -12,15 +12,27 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
+import com.aidanogrady.contextualtriggers.context.DBHelper;
 
 /**
  * Created by ASUS on 14/04/2017.
  */
 
 public class StepCounter extends Service implements SensorEventListener {
-
     private static final String TAG = "StepCounter";
-    private int lastSteps = -1;
+
+    /**
+     * The number of steps to be walked for the counter to send an intent.
+     */
+    private static final int THRESHOLD = 50;
+
+    /**
+     * The total number of steps walked since booting.
+     */
+    private int mTotalStepsSinceBoot;
+
+    private boolean mFirstLoad = true;
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -51,13 +63,21 @@ public class StepCounter extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         int steps = (int) event.values[0];
-        Log.e(TAG, "steps: " + steps);
-        Intent intent = new Intent(this, ContextUpdateManager.class);
-        intent.putExtra("DataSource", "Steps");
-        intent.putExtra("Count", steps);
-        startService(intent);
-
-        lastSteps = steps;
+        System.out.println(steps + " steps since boot");
+        if (mFirstLoad) {
+            mTotalStepsSinceBoot = steps;
+            mFirstLoad = false;
+        } else {
+            int diff = steps - mTotalStepsSinceBoot;
+            if (diff > THRESHOLD) {
+                mTotalStepsSinceBoot = steps;
+                System.out.println("Step diff: " + diff);
+                Intent intent = new Intent(this, ContextUpdateManager.class);
+                intent.putExtra("DataSource", "Steps");
+                intent.putExtra("Count", diff);
+                startService(intent);
+            }
+        }
     }
 
 

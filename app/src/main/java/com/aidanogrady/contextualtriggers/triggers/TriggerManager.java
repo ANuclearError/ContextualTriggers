@@ -54,6 +54,7 @@ public class TriggerManager {
                 upcomingEventWeatherTriggerList,
                 mContextHolder);
 
+        Trigger stepsTrigger = new StepsTrigger(mContextHolder);
         //Triggers
 //        mTriggers.add(batteryTrigger);
 //        mTriggers.add(timeRangeTrigger);
@@ -63,6 +64,7 @@ public class TriggerManager {
 //        mTriggers.add(goodWeatherTrigger);
 //        mTriggers.add(emptyCalendarWeatherTrigger);
 //        mTriggers.add(upcomingEventWeatherTrigger);
+        mTriggers.add(stepsTrigger);
     }
 
     public void update(){
