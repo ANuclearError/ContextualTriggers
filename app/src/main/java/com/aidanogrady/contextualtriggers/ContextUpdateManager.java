@@ -1,16 +1,17 @@
 package com.aidanogrady.contextualtriggers;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.Manifest;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
@@ -24,11 +25,13 @@ import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
-import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
-import com.aidanogrady.contextualtriggers.context.data.WeatherForecast;
+import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
+import com.permissioneverywhere.PermissionEverywhere;
+import com.permissioneverywhere.PermissionResponse;
+import com.permissioneverywhere.PermissionResultCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,9 +42,14 @@ import java.util.List;
  * The ContextUpdateManager is an Android service that is used to manage the data sources
  * and handle any updates that they may send.
  */
-public class ContextUpdateManager extends Service {
-
+public class ContextUpdateManager extends Service implements PermissionResultCallback {
     private static final String TAG = "ContextUpdateManager";
+
+    private static final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_CALENDAR
+    };
 
     private TriggerManager triggerManager;
 
@@ -63,6 +71,8 @@ public class ContextUpdateManager extends Service {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+
+        requestPermissions();
         wakeLock.acquire();
 
 
@@ -228,5 +238,37 @@ public class ContextUpdateManager extends Service {
     @Nullable @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void requestPermissions() {
+        PermissionEverywhere.getPermission(getApplicationContext(),
+                REQUIRED_PERMISSIONS,
+                2,
+                "Contextual Triggers",
+                "This service needs multple write permissions",
+                R.mipmap.ic_launcher)
+                .enqueue(this);
+    }
+
+    @Override
+    public void onComplete(PermissionResponse permissionResponse) {
+        boolean allReqs = true;
+        for (String permission: REQUIRED_PERMISSIONS) {
+            allReqs = allReqs && ActivityCompat.checkSelfPermission(this, permission) ==
+                            PackageManager.PERMISSION_GRANTED;
+        }
+        if (!allReqs) {
+            Toast.makeText(getApplicationContext(),
+                    "Not all permissions provided, functionality may be limited",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+
+        Intent locationIntent = new Intent(this, LocationDataSource.class);
+        locationIntent.putExtra("Permission", allReqs);
+        startService(locationIntent);
+
+        Intent calendarIntent = new Intent(this, CalendarDataSource.class);
+        startService(calendarIntent);
     }
 }
