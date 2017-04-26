@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static DBHelper instance;
 
-    // Geofence table (to store home and work location)
+    // Geofences table (to store home and work location)
     private static final String GEOFENCE_TABLE_NAME = "Geofences";
     private static final String GEOFENCE_COLUMN_ID = "Id";
     private static final String GEOFENCE_COLUMN_GEOFENCE_NAME = "LocationName";
@@ -44,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static void init(Context context) {
         if (instance == null)
             instance = new DBHelper(context);
+//        instance.onUpgrade(instance.getWritableDatabase(), DB_VERSION, DB_VERSION);
         Log.e("DB", "initialised");
         Log.i("DB", "table created");
     }
@@ -60,7 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public static void addGeofence(Geofence geofence) {
+    public static void addGeofence(Geofences geofence) {
         ContentValues values = new ContentValues();
         values.put(GEOFENCE_COLUMN_GEOFENCE_NAME, geofence.getName());
         values.put(GEOFENCE_COLUMN_LATITUDE, geofence.getLatitude());
@@ -68,7 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
         geofence.setId(instance.getWritableDatabase().insert(GEOFENCE_TABLE_NAME, null, values));
     }
 
-    public static Geofence getGeofence(String geofenceName) {
+    public static Geofences getGeofence(String geofenceName) {
         String query = "SELECT * FROM " + GEOFENCE_TABLE_NAME
                 + " WHERE " + GEOFENCE_COLUMN_GEOFENCE_NAME + " = \"" + geofenceName + "\"";
 
@@ -77,7 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
             String name = cursor.getString(cursor.getColumnIndex(GEOFENCE_COLUMN_GEOFENCE_NAME));
             double latitude = cursor.getDouble(cursor.getColumnIndex(GEOFENCE_COLUMN_LATITUDE));
             double longitude = cursor.getDouble(cursor.getColumnIndex(GEOFENCE_COLUMN_LONGITUDE));
-            return new Geofence(name, latitude, longitude);
+            return new Geofences(name, latitude, longitude);
         }
         return null;
     }

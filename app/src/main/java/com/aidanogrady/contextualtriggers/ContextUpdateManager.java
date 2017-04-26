@@ -1,6 +1,7 @@
 package com.aidanogrady.contextualtriggers;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -11,23 +12,24 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 import com.aidanogrady.contextualtriggers.context.DBHelper;
-import com.aidanogrady.contextualtriggers.context.Geofence;
+import com.aidanogrady.contextualtriggers.context.Geofences;
 import com.aidanogrady.contextualtriggers.context.data.ActivityRecognitionDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
-import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
-import com.aidanogrady.contextualtriggers.context.data.WeatherForecast;
+import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
+import com.google.android.gms.location.Geofence;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,21 +93,6 @@ public class ContextUpdateManager extends Service {
         triggerManager = new TriggerManager(this, contextHolder);
 
         setupAlarm();
-
-        // check if home & work location are known
-        Geofence homeGeofence = DBHelper.getGeofence("Home");
-        Geofence workGeofence = DBHelper.getGeofence("Work");
-        if (homeGeofence != null) {
-            Log.e(TAG, "This should not be printed1");
-            isHomeGeofenceSet = true;
-            addGeofence(homeGeofence);
-        }
-        if (workGeofence != null) {
-            Log.e(TAG, "This should not be printed2");
-            isWorkGeofenceSet = true;
-            addGeofence(workGeofence);
-        }
-        Log.e(TAG, "Checked that database is empty");
 
     }
 
@@ -177,13 +164,13 @@ public class ContextUpdateManager extends Service {
 
                                 // check if can set any of geofences
                                 if (!isHomeGeofenceSet && isInTimeRange(2,4)) {
-                                    Geofence homeGeofence = new Geofence("Home", latitude, longitude);
+                                    Geofences homeGeofence = new Geofences("Home", latitude, longitude);
                                     DBHelper.addGeofence(homeGeofence);
                                     addGeofence(homeGeofence);
                                     isHomeGeofenceSet = true;
                                 }
-                                if (!isWorkGeofenceSet && isInTimeRange(10,12)) {
-                                    Geofence workGeofence = new Geofence("Work", latitude, longitude);
+                                if (!isWorkGeofenceSet && isInTimeRange(14,16)) {
+                                    Geofences workGeofence = new Geofences("Work", latitude, longitude);
                                     DBHelper.addGeofence(workGeofence);
                                     addGeofence(workGeofence);
                                     isWorkGeofenceSet = true;
@@ -210,6 +197,30 @@ public class ContextUpdateManager extends Service {
                         contextHolder.setTodaysEvents(events);
                         invokedServices.remove(CalendarDataSource.TAG);
                         break;
+                    case "Geofences":
+                        Log.e(TAG, "transition happened: " + intent.getStringExtra("Transition"));
+                        NotificationCompat.Builder mBuilder =
+                                new NotificationCompat.Builder(this)
+                                        .setSmallIcon(R.drawable.basic_notification_icon)
+                                        .setContentTitle("GEOFENCE")
+                                        .setContentText("IT WORKED " + intent.getStringExtra("Transition"));
+                        NotificationManager mNotifyMgr =
+                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        mNotifyMgr.notify(1000, mBuilder.build());
+
+                        switch (intent.getIntExtra("Transition", Integer.MAX_VALUE)) {
+                            case Geofence.GEOFENCE_TRANSITION_ENTER:
+                                break;
+                            case Geofence.GEOFENCE_TRANSITION_DWELL:
+                                break;
+                            case Geofence.GEOFENCE_TRANSITION_EXIT:
+                                break;
+                        }
+
+                        break;
+                    case "Connected":
+                        checkIfKnown();
+                        break;
                     // add other data sources here
                     // for any dataservice - update context api and add invokedService.remove(tag)
                     // if set empty - notify trigger manager
@@ -235,10 +246,27 @@ public class ContextUpdateManager extends Service {
                 && calendar.get(Calendar.HOUR_OF_DAY) <= to;
     }
 
-    private void addGeofence(Geofence geofence) {
+    private void addGeofence(Geofences geofence) {
         Intent locationIntent = new Intent(this, LocationDataSource.class);
-        locationIntent.putExtra("Geofence", geofence);
+        locationIntent.putExtra("Geofences", geofence);
         startService(locationIntent);
+    }
+
+    private void checkIfKnown() {
+        // check if home & work location are known
+        Geofences homeGeofence = DBHelper.getGeofence("Home");
+        Geofences workGeofence = DBHelper.getGeofence("Work");
+        Log.e(TAG, "Checking is geofences are set");
+        if (homeGeofence != null) {
+            Log.e(TAG, "Home location is set");
+            isHomeGeofenceSet = true;
+            addGeofence(homeGeofence);
+        }
+        if (workGeofence != null) {
+            Log.e(TAG, "Work location is set");
+            isWorkGeofenceSet = true;
+            addGeofence(workGeofence);
+        }
     }
 
     @Nullable @Override

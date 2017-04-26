@@ -7,14 +7,14 @@ import android.os.Parcelable;
  * Created by Kristine on 25/04/2017.
  */
 
-public class Geofence implements Parcelable {
+public class Geofences implements Parcelable {
 
     private long id;
     private String name;
     private double latitude;
     private double longitude;
 
-    public Geofence(String name, double latitude, double longitude) {
+    public Geofences(String name, double latitude, double longitude) {
         this.id = Integer.MAX_VALUE;
         this.name = name;
         this.latitude = latitude;
@@ -56,9 +56,9 @@ public class Geofence implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
 
-        public Geofence createFromParcel(Parcel in) {return new Geofence(in); }
+        public Geofences createFromParcel(Parcel in) {return new Geofences(in); }
 
-        public Geofence[] newArray(int size) { return new Geofence[size]; }
+        public Geofences[] newArray(int size) { return new Geofences[size]; }
     };
 
     @Override
@@ -71,7 +71,7 @@ public class Geofence implements Parcelable {
         dest.writeDouble(longitude);
     }
 
-    private Geofence(Parcel in) {
+    private Geofences(Parcel in) {
         id = Integer.MAX_VALUE;
         name = in.readString();
         latitude = in.readDouble();

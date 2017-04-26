@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 import com.aidanogrady.contextualtriggers.R;
+import com.aidanogrady.contextualtriggers.context.Geofences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,11 +28,8 @@ import com.permissioneverywhere.PermissionEverywhere;
 import com.permissioneverywhere.PermissionResponse;
 import com.permissioneverywhere.PermissionResultCallback;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,22 +55,15 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private LocationRequest mLocationRequest;
 
-    private boolean mRequestInProgress;
-
     private boolean mIsServicesAvailable;
 
-    // geofencing
+    // Geofences
 
     private List<Geofence> mGeofenceList;
 
-    private static final int GEOFENCE_RADIUS = 150;
+    private static final int GEOFENCE_RADIUS = 5;
 
     private PendingIntent mGeofencePendingIntent;
-
-    /**
-     * The last recorded location recorded.
-     */
-    private Location mLocation;
 
     public LocationDataSource() {
         super("LocationDataSource");
@@ -84,9 +74,7 @@ public class LocationDataSource extends IntentService implements LocationListene
         super.onCreate();
 
         System.out.println("Creating location data source service");
-        mRequestInProgress = false;
 
-//        mLocationRequest = LocationRequest.create();
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
@@ -96,6 +84,7 @@ public class LocationDataSource extends IntentService implements LocationListene
         mIsServicesAvailable = isServicesConnected();
 
         setUpLocationClientIfNeeded();
+        mGoogleApiClient.connect();
 
         mGeofenceList = new ArrayList<>();
         mGeofencePendingIntent = null;
@@ -103,37 +92,28 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-
-        if (!mIsServicesAvailable || mGoogleApiClient.isConnected() || mRequestInProgress) {
-            return START_STICKY;
+        Bundle bundle = null;
+        if (intent != null) {
+            bundle = intent.getExtras();
         }
+        if (bundle != null) {
+            Log.e(TAG, "in on handle intent");
+            if (intent.hasExtra("Geofences")) {
+                Geofences geofence
+                        = intent.getParcelableExtra("Geofences");
+                createGeofence(geofence);
+                addGeofences();
 
-        setUpLocationClientIfNeeded();
-        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !mRequestInProgress) {
-            mRequestInProgress = true;
-            mGoogleApiClient.connect();
+            }
         }
         return START_STICKY;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Log.e(TAG,"in on handle intent");
-        Log.e(TAG,intent.hasExtra("Geofence")+"");
-        if (intent.hasExtra("Geofence")) {
-            com.aidanogrady.contextualtriggers.context.Geofence geofence
-                    = intent.getParcelableExtra("Geofence");
-            createGeofence(geofence);
-            addGeofences();
-
-        }
-    }
+    protected void onHandleIntent(Intent intent) {  }
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocation = location;
-
         Log.e(TAG, "on Location Changed triggered: "
                 + "lat " + location.getLatitude() + " long" + location.getLongitude());
 
@@ -170,24 +150,17 @@ public class LocationDataSource extends IntentService implements LocationListene
                 .enqueue(this);
 
         System.out.println("Notification worked");
+
+        Intent intent = new Intent(this, ContextUpdateManager.class);
+        intent.putExtra("DataSource", "Connected");
+        startService(intent);
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-        mRequestInProgress = false;
-        mGoogleApiClient = null;
-    }
+    public void onConnectionSuspended(int i) { }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mRequestInProgress = false;
-        if (connectionResult.hasResolution()) {
-            System.out.println("Figure this out later");
-            Toast.makeText(getApplicationContext(),
-                    ("connection failed"),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) { }
 
 
     private boolean isServicesConnected() {
@@ -221,9 +194,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         }
     }
 
-    // Geofencing stuff below
+    // Geofences methods below
 
-    private void createGeofence(com.aidanogrady.contextualtriggers.context.Geofence geofence) {
+    private void createGeofence(Geofences geofence) {
         mGeofenceList.add(new Geofence.Builder()
                             .setRequestId(geofence.getName())
                             .setCircularRegion(
@@ -233,13 +206,17 @@ public class LocationDataSource extends IntentService implements LocationListene
                             )
                             .setExpirationDuration(Geofence.NEVER_EXPIRE)
                             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                                Geofence.GEOFENCE_TRANSITION_DWELL |
                                                 Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .setLoiteringDelay(1000)
                             .build());
     }
 
     private GeofencingRequest getGeofencingRequest() {
         return new GeofencingRequest.Builder()
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER |
+                        GeofencingRequest.INITIAL_TRIGGER_DWELL |
+                        GeofencingRequest.INITIAL_TRIGGER_EXIT)
                 .addGeofences(mGeofenceList)
                 .build();
     }
