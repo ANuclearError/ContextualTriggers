@@ -8,6 +8,7 @@ import android.os.BatteryManager;
 import android.util.Pair;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 
 import java.text.ParseException;
@@ -22,7 +23,7 @@ public class ContextHolder implements ContextAPI {
     private int steps;
     private Pair<Double, Double> location;
     private WeatherResult weatherForecast;
-    private String nearbyFoursquareData;
+    private FoursquareResult nearbyFoursquareData;
     private List<CalendarEvent> calendarEvents;
 
     public ContextHolder(Context context) {
@@ -89,11 +90,11 @@ public class ContextHolder implements ContextAPI {
         }
     }
 
-    public void setNearbyFoursquareData(String nearby) {
+    public void setNearbyFoursquareData(FoursquareResult nearby){
         nearbyFoursquareData = nearby;
     }
 
-    public String getNearbyFoursquareData(){
+    public FoursquareResult getNearbyFoursquareData(){
         return nearbyFoursquareData;
     }
 

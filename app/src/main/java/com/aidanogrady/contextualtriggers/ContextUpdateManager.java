@@ -22,6 +22,7 @@ import com.aidanogrady.contextualtriggers.context.data.ActivityRecognitionDataSo
 import com.aidanogrady.contextualtriggers.context.data.CalendarDataSource;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareDataSource;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
 import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.OpenWeatherDataSource;
@@ -181,7 +182,7 @@ public class ContextUpdateManager extends Service {
                         invokedServices.remove(OpenWeatherDataSource.TAG);
                         break;
                     case "Foursquare":
-                        String nearby = intent.getStringExtra("nearby");
+                        FoursquareResult nearby = intent.getParcelableExtra("nearby");
                         contextHolder.setNearbyFoursquareData(nearby);
                         invokedServices.remove(FoursquareDataSource.TAG);
                         break;

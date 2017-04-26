@@ -5,6 +5,7 @@ import android.util.Pair;
 import android.content.SharedPreferences;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 
 import java.text.ParseException;
@@ -27,7 +28,7 @@ public interface ContextAPI  {
 
     int getBatteryLevel();
 
-    String getNearbyFoursquareData();
+    FoursquareResult getNearbyFoursquareData();
 
     List<CalendarEvent> getTodaysEvents();
 

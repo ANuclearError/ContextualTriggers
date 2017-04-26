@@ -4,15 +4,21 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FoursquareDataSource extends IntentService {
@@ -67,15 +73,17 @@ public class FoursquareDataSource extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
     }
 
-    public void onSensorChanged(String nearby) {
+    public void sendResult(List<FoursquareVenue> venues) {
 
-        if(nearby == null){
-            return;
-        }
+        Parcel parcel = Parcel.obtain();
+        parcel.writeList(venues);
+        parcel.setDataPosition(0);
+        FoursquareResult result = FoursquareResult.CREATOR.createFromParcel(parcel);
+        parcel.recycle();
 
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Foursquare");
-        intent.putExtra("nearby", nearby);
+        intent.putExtra("nearby", result);
         startService(intent);
 
     }
@@ -144,13 +152,45 @@ public class FoursquareDataSource extends IntentService {
                 stream.close();
                 foursquareConnection.disconnect();
 
-                String nearbyLocationsString = buffer.toString();
-                System.out.println(nearbyLocationsString);
-                onSensorChanged(nearbyLocationsString);
+                JSONObject jsonObject = new JSONObject(buffer.toString());
+                handleResult(jsonObject);
 
             } catch (Exception e) {
                 System.out.println("An exception happened: " + e);
-                onSensorChanged(null);
+                sendResult(null);
+            }
+        }
+
+        private void handleResult(JSONObject result){
+            try {
+
+                List<FoursquareVenue> venueList = new ArrayList<>();
+
+                JSONArray venueArray = result
+                        .getJSONObject("response")
+                        .getJSONArray("venues");
+
+                for(int i = 0; i < venueArray.length(); i++) {
+                    JSONObject venueObject = venueArray.getJSONObject(i);
+
+                    String name = venueObject.getString("name");
+
+                    int checkIns = venueObject
+                            .getJSONObject("stats")
+                            .getInt("checkinsCount");
+
+                    String category = venueObject
+                            .getJSONArray("categories")
+                            .getJSONObject(0)
+                            .getString("name");
+
+                    venueList.add(new FoursquareVenue(name,category,checkIns));
+                }
+
+                sendResult(venueList);
+
+            } catch (Exception e) {
+                System.out.println("An exception happened: " + e);
             }
         }
     }

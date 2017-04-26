@@ -8,6 +8,7 @@ import android.support.v4.util.Pair;
 
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
+import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +63,7 @@ public class FoursquareTrigger extends SimpleTrigger {
 
     @Override
     public Boolean isTriggered() {
-        String nearby = mContextHolder.getNearbyFoursquareData();
+        FoursquareResult nearby = mContextHolder.getNearbyFoursquareData();
 
         if(nearby != null){
             return handleNearbyData(nearby);
@@ -72,47 +73,50 @@ public class FoursquareTrigger extends SimpleTrigger {
     }
 
 
-    private boolean handleNearbyData(String nearby) {
+    private boolean handleNearbyData(FoursquareResult nearby) {
 
-        try {
+        System.out.println(nearby.getNearbyVenues());
 
-            JSONObject nearbyJson = new JSONObject(nearby).getJSONObject("response");
-            JSONArray jsonArray = nearbyJson.getJSONArray("venues");
-
-            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
-
-            if(jsonArray.length() != 0){
-
-                updateTally(jsonArray);
-
-                for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject venueObject = jsonArray.getJSONObject(i);
-                    String name = venueObject.getString("name");
-                    JSONObject statsObject = venueObject.getJSONObject("stats");
-                    int checkIns = statsObject.getInt("checkinsCount");
-
-                    String category = venueObject
-                            .getJSONArray("categories")
-                            .getJSONObject(0)
-                            .getString("name");
-
-                    int categoryTally = commonLocations.getInt(category, -1);
-
-                    if(checkIns >= mCheckinThreshold && categoryTally >= categoryVisitThreshold) {
-                        mNotificationTitle = "Great location nearby!";
-                        mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            return false;
-
-        } catch (JSONException e) {
-            return false;
-        }
+//        try {
+//
+//            JSONObject nearbyJson = new JSONObject(nearby).getJSONObject("response");
+//            JSONArray jsonArray = nearbyJson.getJSONArray("venues");
+//
+//            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
+//
+//            if(jsonArray.length() != 0){
+//
+//                updateTally(jsonArray);
+//
+//                for(int i = 0; i < jsonArray.length(); i++){
+//                    JSONObject venueObject = jsonArray.getJSONObject(i);
+//                    String name = venueObject.getString("name");
+//                    JSONObject statsObject = venueObject.getJSONObject("stats");
+//                    int checkIns = statsObject.getInt("checkinsCount");
+//
+//                    String category = venueObject
+//                            .getJSONArray("categories")
+//                            .getJSONObject(0)
+//                            .getString("name");
+//
+//                    int categoryTally = commonLocations.getInt(category, -1);
+//
+//                    if(checkIns >= mCheckinThreshold && categoryTally >= categoryVisitThreshold) {
+//                        mNotificationTitle = "Great location nearby!";
+//                        mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
+//                        return true;
+//                    }
+//                }
+//
+//                return false;
+//            }
+//
+//            return false;
+//
+//        } catch (JSONException e) {
+//            return false;
+//        }
+    return false;
     }
 
     private void updateTally(JSONArray venues){
