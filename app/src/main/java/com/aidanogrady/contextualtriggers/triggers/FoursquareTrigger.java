@@ -1,28 +1,14 @@
 package com.aidanogrady.contextualtriggers.triggers;
-
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.Pair;
-
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.aidanogrady.contextualtriggers.context.data.FoursquareVenue;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Calum on 15/04/2017.
@@ -40,10 +26,10 @@ public class FoursquareTrigger extends SimpleTrigger {
     private String mNotificationTitle;
     private String mNotificationMessage;
 
-    private List<Pair<String,String>> mRecentLocations;
+    private List<Pair<String, String>> mRecentLocations;
     private double mRecentVisitThreshold = 90; // Time in minutes
-    private int categoryVisitThreshold = 10;
-    private int mCheckinThreshold = 100;
+    private int categoryVisitThreshold = 10; //Amount of visits before notification allowed
+    private int mCheckinThreshold = 100; //Amount of checkins to allow for a notification
 
     public FoursquareTrigger(ContextAPI holder) {
         super(holder);
@@ -63,92 +49,55 @@ public class FoursquareTrigger extends SimpleTrigger {
 
     @Override
     public Boolean isTriggered() {
-        FoursquareResult nearby = mContextHolder.getNearbyFoursquareData();
 
-        if(nearby != null){
-            return handleNearbyData(nearby);
+        FoursquareResult venues = mContextHolder.getNearbyFoursquareData();
+        return venues != null && handleNearbyData(venues);
+
+    }
+
+
+    private boolean handleNearbyData(FoursquareResult venues) {
+
+        SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
+        List<FoursquareVenue> nearbyVenues = venues.getNearbyVenues();
+
+        if (!nearbyVenues.isEmpty()) {
+            for (FoursquareVenue venue : nearbyVenues) {
+                if (venue.getCheckins() >= mCheckinThreshold) {
+
+                    updateTally(venue.getVenueName(), venue.getVenueCategory());
+                    int categoryTally = commonLocations.getInt(venue.getVenueCategory(), -1);
+
+                    if (categoryTally >= categoryVisitThreshold) {
+                        mNotificationTitle = "Great location nearby!";
+                        mNotificationMessage = String.format("You are near %s! Perfect for a run!",
+                                venue.getVenueName());
+                        return true;
+                    }
+                }
+
+            }
+            return false;
         }
-
         return false;
     }
 
+    private void updateTally(String venueName, String category) {
 
-    private boolean handleNearbyData(FoursquareResult nearby) {
+        SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
+        int categoryTally = commonLocations.getInt(category, -1);
 
-        System.out.println(nearby.getNearbyVenues());
-
-//        try {
-//
-//            JSONObject nearbyJson = new JSONObject(nearby).getJSONObject("response");
-//            JSONArray jsonArray = nearbyJson.getJSONArray("venues");
-//
-//            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
-//
-//            if(jsonArray.length() != 0){
-//
-//                updateTally(jsonArray);
-//
-//                for(int i = 0; i < jsonArray.length(); i++){
-//                    JSONObject venueObject = jsonArray.getJSONObject(i);
-//                    String name = venueObject.getString("name");
-//                    JSONObject statsObject = venueObject.getJSONObject("stats");
-//                    int checkIns = statsObject.getInt("checkinsCount");
-//
-//                    String category = venueObject
-//                            .getJSONArray("categories")
-//                            .getJSONObject(0)
-//                            .getString("name");
-//
-//                    int categoryTally = commonLocations.getInt(category, -1);
-//
-//                    if(checkIns >= mCheckinThreshold && categoryTally >= categoryVisitThreshold) {
-//                        mNotificationTitle = "Great location nearby!";
-//                        mNotificationMessage = String.format("You are near %s! Perfect for a run!", name);
-//                        return true;
-//                    }
-//                }
-//
-//                return false;
-//            }
-//
-//            return false;
-//
-//        } catch (JSONException e) {
-//            return false;
-//        }
-    return false;
-    }
-
-    private void updateTally(JSONArray venues){
-
-        try {
-            String category = venues.getJSONObject(0)
-                    .getJSONArray("categories")
-                    .getJSONObject(0)
-                    .getString("name");
-
-            String venueName = venues.getJSONObject(0)
-                    .getString("name");
-
-            SharedPreferences commonLocations = mContextHolder.getSharedPreferences("locationPrefs");
-            int categoryTally = commonLocations.getInt(category, -1);
-
-            SharedPreferences.Editor editor = commonLocations.edit();
-            if(categoryTally >= 0) {
-                if(!visitedRecently(venueName)) {
-                    System.out.println("CATEGORY VISITS: " + (categoryTally + 1));
-                    editor.putInt(category, categoryTally + 1);
-                }
-            }else{
-                editor.putInt(category, 1);
+        SharedPreferences.Editor editor = commonLocations.edit();
+        if (categoryTally >= 0) {
+            if (!visitedRecently(venueName)) {
+                System.out.println("CATEGORY VISITS: " + (categoryTally + 1));
+                editor.putInt(category, categoryTally + 1);
             }
-
-            editor.apply();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } else {
+            editor.putInt(category, 1);
         }
 
+        editor.apply();
     }
 
     private boolean visitedRecently(String name) {
@@ -169,11 +118,11 @@ public class FoursquareTrigger extends SimpleTrigger {
                     long minutesDifference = difference / (60 * 1000);
                     System.out.println("DIFFERENCE: " + minutesDifference);
 
-                    if(minutesDifference > mRecentVisitThreshold){
+                    if (minutesDifference > mRecentVisitThreshold) {
                         mRecentLocations.remove(location);
-                        mRecentLocations.add(new Pair<>(name,format.format(current_time)));
+                        mRecentLocations.add(new Pair<>(name, format.format(current_time)));
                         return false;
-                    }else{
+                    } else {
                         return true;
                     }
 
