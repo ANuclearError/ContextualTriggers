@@ -184,7 +184,7 @@ public class OpenWeatherDataSource extends IntentService {
                 WeatherForecast forecast = OpenWeatherDataSource.convertWeatherId(statusCode);
 
                 JSONObject main = result.getJSONObject(MAIN_TAG);
-                double temperature = (double) main.get(TEMPERATURE_TAG);
+                double temperature = ((Integer) main.get(TEMPERATURE_TAG)).doubleValue();
                 int humidity = (int) main.get(HUMIDITY_TAG);
 
                 JSONObject wind = result.getJSONObject(WIND_TAG);
