@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Intent;
+
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.DBHelper;
 
@@ -43,6 +45,11 @@ public class StepsTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return String.format(NOTIFICATION_TEXT, String.valueOf(mSteps));
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

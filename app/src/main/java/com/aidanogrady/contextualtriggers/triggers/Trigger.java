@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Intent;
+
 /**
  * The basic trigger interface. The purpose of a trigger is to prompt the user to perform some
  * behaviour. A trigger will determine the best time to notify the user based on some contextual
@@ -14,6 +16,8 @@ interface Trigger{
     String getNotificationTitle();
 
     String getNotificationMessage();
+
+    Intent getNotificationIntent();
 
     Boolean isTriggered();
 }

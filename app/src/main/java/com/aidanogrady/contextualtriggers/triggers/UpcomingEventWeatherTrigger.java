@@ -95,19 +95,15 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
 //        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
 //    }
 
-    /**
-     * Returns the intent for allowing for an .
-     *
-     * @return map intent
-     */
-    private PendingIntent getMapsIntent() {
+    @Override
+    public Intent getNotificationIntent() {
         String location = mNextEvent.getLocation();
         String locUri = Uri.encode(location);
         String baseUri = "google.navigation:q=%s&mode=w";
         Uri gmmIntentUri = Uri.parse(String.format(baseUri, locUri));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
-        return PendingIntent.getActivity(mContext, 0, mapIntent, 0);
+        return mapIntent;
     }
 
     @Override

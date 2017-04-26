@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Intent;
+
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 
@@ -50,6 +52,11 @@ public class GoodWeatherTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return String.format(NOTIFICATION_TEXT, mForeCast.getForecast().toString());
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

@@ -1,4 +1,5 @@
 package com.aidanogrady.contextualtriggers.triggers;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.util.Pair;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
@@ -45,6 +46,11 @@ public class FoursquareTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return mNotificationMessage;
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

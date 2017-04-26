@@ -69,6 +69,11 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
         return NOTIFICATION_TITLE;
     }
 
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
+    }
+
     //TODO Change to take out context required intent
     public void notifyUser() {
         NotificationCompat.Builder mBuilder =
