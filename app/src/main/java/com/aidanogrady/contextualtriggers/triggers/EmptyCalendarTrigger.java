@@ -1,19 +1,11 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.provider.CalendarContract;
-import android.support.v4.app.NotificationCompat;
 
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 
 import java.util.List;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * The trigger is for event the calendar indicates that today is empty.
@@ -21,11 +13,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * @author Aidan O'Grady
  */
 public class EmptyCalendarTrigger extends SimpleTrigger {
-    /**
-     * Notification id.
-     */
-    private static final int NOTIFICATION_ID = 4;
-
     /**
      * The title of the notification.
      */

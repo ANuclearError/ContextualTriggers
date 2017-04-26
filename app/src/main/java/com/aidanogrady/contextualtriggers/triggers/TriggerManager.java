@@ -8,9 +8,7 @@ import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -26,7 +24,7 @@ public class TriggerManager {
         mTriggers = new ArrayList<>();
 
         Trigger locationTrigger = new LocationTrigger(mContextHolder);
-        Trigger goodWeatherTrigger = new WeatherTrigger(mContextHolder);
+        Trigger goodWeatherTrigger = new GoodWeatherTrigger(mContextHolder);
 
         List<Trigger> weatherLocationList = new ArrayList<>();
         weatherLocationList.add(locationTrigger);
