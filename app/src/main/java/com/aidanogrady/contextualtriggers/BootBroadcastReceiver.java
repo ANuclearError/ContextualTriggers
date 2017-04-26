@@ -16,7 +16,10 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("ContextTriggers", "System booted");
+
+        Log.d("ContextTriggers", "System booted");
+
+        //Start up the MainActivity
         Intent i = new Intent(context, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
