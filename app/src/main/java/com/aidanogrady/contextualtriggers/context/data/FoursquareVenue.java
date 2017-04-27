@@ -11,11 +11,13 @@ public class FoursquareVenue implements Serializable{
     private int mCheckIns;
     private String mVenueName;
     private String mVenueCategory;
+    private String mLatLng;
 
-    public FoursquareVenue(String name, String category, int checkins){
+    public FoursquareVenue(String name, String category, int checkins, String latlng){
         mCheckIns = checkins;
         mVenueName = name;
         mVenueCategory = category;
+        mLatLng = latlng;
     }
 
     public int getCheckins(){
@@ -30,12 +32,17 @@ public class FoursquareVenue implements Serializable{
         return mVenueCategory;
     }
 
+    public String getLatLng(){
+        return mLatLng;
+    }
+
     @Override
     public String toString() {
         return "FoursquareVenue{" +
                 "mCheckIns=" + mCheckIns +
                 ", mVenueName='" + mVenueName + '\'' +
                 ", mVenueCategory='" + mVenueCategory + '\'' +
+                ", mLatLng='" + mLatLng + '\'' +
                 '}';
     }
 }

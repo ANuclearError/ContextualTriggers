@@ -1,6 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareVenue;
@@ -78,7 +79,22 @@ public class StepsWeatherFoursquareTrigger extends CompositeTrigger {
 
     @Override
     public Intent getNotificationIntent() {
-        return null;
+        FoursquareVenue venue = mVenues.get(0);
+        String latLng = null;
+        if (venue != null) {
+            latLng = venue.getLatLng();
+        }
+
+        if (latLng != null) {
+            String locUri = Uri.encode(latLng);
+            String baseUri = "google.navigation:q=%s&mode=w";
+            Uri gmmIntentUri = Uri.parse(String.format(baseUri, locUri));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            return mapIntent;
+        } else {
+            return null;
+        }
     }
 
     @Override

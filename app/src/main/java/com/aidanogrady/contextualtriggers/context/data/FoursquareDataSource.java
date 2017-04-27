@@ -193,7 +193,21 @@ public class FoursquareDataSource extends IntentService {
                             .getJSONObject(0)
                             .getString("name");
 
-                    venueList.add(new FoursquareVenue(name,category,checkIns));
+                    String lat = Double.toString(
+                            venueObject
+                            .getJSONObject("location")
+                            .getDouble("lat")
+                    );
+
+                    String lng = Double.toString(
+                            venueObject
+                            .getJSONObject("location")
+                            .getDouble("lng")
+                    );
+
+                    String latlng = lat + "," + lng;
+
+                    venueList.add(new FoursquareVenue(name,category,checkIns,latlng));
                 }
 
                 sendResult(venueList);
