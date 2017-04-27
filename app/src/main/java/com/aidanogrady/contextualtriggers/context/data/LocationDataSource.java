@@ -39,9 +39,9 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private static final String TAG = "LocationDS";
 
-    private static final long UPDATE_INTERVAL = 20 * 1000; // 35 * 60 * 1000
+    private static final long UPDATE_INTERVAL = 30 * 60 * 1000;
 
-    private static final long FASTEST_INTERVAL = 15 * 1000; // 30 * 60 * 1000
+    private static final long FASTEST_INTERVAL = 20 * 60 * 1000;
 
     private static final long MAX_WAIT_TIME =  UPDATE_INTERVAL;
 
