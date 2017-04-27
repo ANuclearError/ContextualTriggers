@@ -85,9 +85,6 @@ public class TriggerManager {
                 mContextHolder);
 
         //Triggers
-        mTriggers.add(batteryTrigger);
-        mTriggers.add(foursquareTrigger);
-        mTriggers.add(goodWeatherTrigger);
         mTriggers.add(emptyCalendarWeatherTrigger);
         mTriggers.add(upcomingEventWeatherTrigger);
         mTriggers.add(atHomeGoodWeatherTrigger);

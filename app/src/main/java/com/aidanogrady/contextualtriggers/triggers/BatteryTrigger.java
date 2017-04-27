@@ -22,7 +22,7 @@ public class BatteryTrigger extends SimpleTrigger {
         mContextHolder = holder;
         mThreshold = 50;
         mTitle = "Battery Notification";
-        mMessage = "Battery below " + mThreshold + "%";
+        mMessage = "You have a lot of battery left, you can go for a walk.";
     }
 
     @Override
