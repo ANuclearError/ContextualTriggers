@@ -121,7 +121,7 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
 
                             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                             if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
-                                    && activeNetwork.isConnected()) {
+                                    && activeNetwork != null && activeNetwork.isConnected()) {
 
                                 Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);

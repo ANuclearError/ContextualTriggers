@@ -76,6 +76,14 @@ public class TriggerManager {
                 atHomeGoodWeatherTriggerList,
                 mContextHolder);
 
+        List<Trigger> stepsWeatherFoursquareList = new ArrayList<>();
+        stepsWeatherFoursquareList.add(foursquareTrigger);
+        stepsWeatherFoursquareList.add(goodWeatherTrigger);
+        stepsWeatherFoursquareList.add(stepsTrigger);
+        Trigger stepsWeatherFoursquareTrigger= new StepsWeatherFoursquareTrigger(
+                stepsWeatherFoursquareList,
+                mContextHolder);
+
         //Triggers
         mTriggers.add(batteryTrigger);
         mTriggers.add(foursquareTrigger);
@@ -85,6 +93,7 @@ public class TriggerManager {
         mTriggers.add(atHomeGoodWeatherTrigger);
         mTriggers.add(stepsTrigger);
         mTriggers.add(endOfWorkDayTrigger);
+        mTriggers.add(stepsWeatherFoursquareTrigger);
     }
 
     public void update(){
@@ -108,7 +117,7 @@ public class TriggerManager {
     private void handleNotifications(List<Trigger> activatedTriggers){
         Trigger bestTrigger = activatedTriggers.get(0);
         for (Trigger t: activatedTriggers) {
-            if(t.getComplexity() > bestTrigger.getComplexity()){
+            if (t.getComplexity() > bestTrigger.getComplexity()) {
                 bestTrigger = t;
             }
         }

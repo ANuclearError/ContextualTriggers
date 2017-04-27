@@ -14,7 +14,6 @@ import java.util.List;
  * @author Aidan O'Grady
  */
 public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
-
     /**
      * The title of the notification.
      */
@@ -24,7 +23,7 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
      * The text of this notification.
      */
     private static final String NOTIFICATION_TEXT =
-            "You've nothing planned today, and the weather's nice, why not go for a walk?";
+            "You've nothing planned today, and it's %s, why not go for a walk?";
 
     /**
      * The triggers that this trigger comprises of.
@@ -63,7 +62,8 @@ public class EmptyCalendarWeatherTrigger extends CompositeTrigger {
 
     @Override
     public String getNotificationMessage() {
-        return NOTIFICATION_TEXT;
+        String weather = mContextHolder.getWeatherForecast().getForecast().toString();
+        return String.format(NOTIFICATION_TEXT, weather);
     }
 
     @Override
