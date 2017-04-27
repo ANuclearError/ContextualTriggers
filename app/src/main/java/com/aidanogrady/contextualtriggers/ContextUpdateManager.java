@@ -1,7 +1,6 @@
 package com.aidanogrady.contextualtriggers;
 
 import android.Manifest;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,10 +11,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.ContextHolder;
 import com.aidanogrady.contextualtriggers.context.DBHelper;
@@ -67,7 +64,7 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "reached service");
+        Log.d(TAG, "reached service");
 
         DBHelper.init(getApplicationContext());
 
@@ -75,8 +72,6 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakeLock.acquire();
         requestPermissions();
-
-
 
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
@@ -109,34 +104,25 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
         if (bundle != null) {
 
             if (intent.hasExtra("DataSource")) {
-                // received info from a datasource, should read from intent and store properly
+                // saving data received from datasource
                 String source = intent.getStringExtra("DataSource");
                 switch (source) {
                     case "Steps":
                         int steps = intent.getIntExtra("Count", 0);
-                        if (steps == -1) {
-                            // should we handle if no step counter available?
-                            // is so, should we use gps and calculate average steps?
-                        } else {
+                        if (steps != -1) {
                             contextHolder.addSteps(steps);
                             System.out.println("Updated steps");
                         }
                         break;
                     case "Location":
-//                        if (invokedServices.isEmpty()) {
                             double latitude = intent.getDoubleExtra("Latitude", Double.MAX_VALUE);
                             double longitude = intent.getDoubleExtra("Longitude", Double.MAX_VALUE);
-
                             contextHolder.setLocation(new Pair<>(latitude, longitude));
-                            Toast.makeText(getApplicationContext(),
-                                    ("Received: Lat " + latitude + "Long "+ longitude),
-                                    Toast.LENGTH_LONG).show();
 
                             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
                             if (latitude != Double.MAX_VALUE && longitude != Double.MAX_VALUE
                                     && activeNetwork.isConnected()) {
 
-                                System.out.println("Getting weather data");
                                 Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
                                 weatherIntent.putExtra("Latitude", latitude);
                                 weatherIntent.putExtra("Longitude", longitude);
@@ -146,11 +132,12 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                                 foursquareIntent.putExtra("Latitude", latitude);
                                 foursquareIntent.putExtra("Longitude", longitude);
                                 startService(foursquareIntent);
+
                                 // add tags of any invoked services here
                                 invokedServices.add(OpenWeatherDataSource.TAG);
                                 invokedServices.add(FoursquareDataSource.TAG);
 
-                                // check if can set any of geofences
+                                // setting available geofences
                                 if (!isHomeGeofenceSet && isInTimeRange(2,4)) {
                                     Geofences homeGeofence = new Geofences("Home", latitude, longitude);
                                     DBHelper.addGeofence(homeGeofence);
@@ -167,7 +154,6 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                                 Intent calendarIntent = new Intent(this, CalendarDataSource.class);
                                 startService(calendarIntent);
                             }
-//                        }
                         break;
                     case "Weather":
                         WeatherResult result = intent.getParcelableExtra(WeatherResult.TAG);
@@ -182,23 +168,10 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                     case "Calendar":
                         ArrayList<CalendarEvent> events =
                                 intent.getParcelableArrayListExtra(CalendarEvent.TAG);
-                        if (events != null) {
-                            System.out.printf("%d events found\n", events.size());
-                        }
                         contextHolder.setTodaysEvents(events);
                         invokedServices.remove(CalendarDataSource.TAG);
                         break;
                     case "Geofence":
-                        Log.e(TAG, "transition happened: " + intent.getIntExtra("Transition", Integer.MAX_VALUE));
-                        NotificationCompat.Builder mBuilder =
-                                new NotificationCompat.Builder(this)
-                                        .setSmallIcon(R.drawable.basic_notification_icon)
-                                        .setContentTitle("GEOFENCE")
-                                        .setContentText("IT WORKED " + intent.getIntExtra("Transition", Integer.MAX_VALUE));
-                        NotificationManager mNotifyMgr =
-                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                        mNotifyMgr.notify(1000, mBuilder.build());
-
                         ArrayList<String> triggeredGeofencesIds = intent.getStringArrayListExtra("Geofences");
                         switch (intent.getIntExtra("Transition", Integer.MAX_VALUE)) {
                             case Geofence.GEOFENCE_TRANSITION_ENTER:
@@ -231,28 +204,19 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                         break;
                     // add other data sources here
                     // for any dataservice - update context api and add invokedService.remove(tag)
-                    // if set empty - notify trigger manager
-                }
+                } // if set empty - notify trigger manager
                 if(triggerManager != null && invokedServices.isEmpty()) {
                     triggerManager.update();
                 }
             }
         }
-
         return START_STICKY;
     }
 
     private boolean isInTimeRange(int from, int to) {
-        Log.e(TAG, "Checking time range " + from + " " + to);
+        Log.d(TAG, "Checking time range " + from + " " + to);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        Log.e(TAG, "Current value " + calendar.get(Calendar.HOUR_OF_DAY)
-                + ":" + calendar.get(Calendar.MINUTE)
-                +":"+calendar.get(Calendar.SECOND));
-
-        boolean res = calendar.get(Calendar.HOUR_OF_DAY) >= from
-                && calendar.get(Calendar.HOUR_OF_DAY) <= to;
-        System.out.println("In time range: " + res);
         return calendar.get(Calendar.HOUR_OF_DAY) >= from
                 && calendar.get(Calendar.HOUR_OF_DAY) <= to;
     }
@@ -267,14 +231,14 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
         // check if home & work location are known
         Geofences homeGeofence = DBHelper.getGeofence("Home");
         Geofences workGeofence = DBHelper.getGeofence("Work");
-        Log.e(TAG, "Checking is geofences are set");
+        Log.d(TAG, "Checking is geofences are set");
         if (homeGeofence != null) {
-            Log.e(TAG, "Home location is set");
+            Log.d(TAG, "Home location is set");
             isHomeGeofenceSet = true;
             addGeofence(homeGeofence);
         }
         if (workGeofence != null) {
-            Log.e(TAG, "Work location is set");
+            Log.d(TAG, "Work location is set");
             isWorkGeofenceSet = true;
             addGeofence(workGeofence);
         }
