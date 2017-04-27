@@ -100,6 +100,8 @@ public class UpcomingEventTrigger extends SimpleTrigger {
 
         // Get the difference between times in minutes, shouldn't be negative but making sure.
         long diff = TimeUnit.MILLISECONDS.toMinutes(Math.abs(start - now));
-        return diff >= MIN_MINUTES_THRESHOLD && diff <= MAX_MINUTES_THRESHOLD;
+        return diff >= MIN_MINUTES_THRESHOLD &&
+                diff <= MAX_MINUTES_THRESHOLD &&
+                mNextEvent.getLocation() != null;
     }
 }

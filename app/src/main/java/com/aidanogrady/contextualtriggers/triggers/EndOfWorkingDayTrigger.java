@@ -42,6 +42,11 @@ public class EndOfWorkingDayTrigger extends SimpleTrigger {
     }
 
     @Override
+    public int getComplexity() {
+        return 24601;
+    }
+
+    @Override
     public Boolean isTriggered() {
         endOfDayTime = mContextHolder.getEndOfDayTime();
         Calendar calendar = Calendar.getInstance();
