@@ -90,6 +90,9 @@ public class TriggerManager {
         mTriggers.add(stepsTrigger);
         mTriggers.add(endOfWorkDayTrigger);
         mTriggers.add(atHomeGoodWeatherTrigger);
+        mTriggers.add(stepsTrigger);
+        mTriggers.add(endOfWorkDayTrigger);
+
     }
 
     public void update(){

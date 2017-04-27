@@ -1,20 +1,15 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
+import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * The UpcomingEventWeatherTrigger combines the upcoming event and weather triggers, to ensure that
@@ -24,11 +19,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class UpcomingEventWeatherTrigger extends CompositeTrigger {
     /**
-     * Notification id.
-     */
-    private static final int NOTIFICATION_ID = 6;
-
-    /**
      * The title of the notification.
      */
     private static final String NOTIFICATION_TITLE = "Upcoming Event";
@@ -37,16 +27,11 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
      * The text of this notification.
      */
     private static final String NOTIFICATION_TEXT =
-            "You have an event at %s and it's nice outside, why not walk to %s?";
+            "You have an event at %s and it's %s outside, why not walk to %s? Tap here for a route";
     /**
      * The triggers that this trigger comprises of.
      */
     private List<Trigger> mTriggers;
-
-    /**
-     * The Android context of this trigger.
-     */
-    private Context mContext;
 
     /**
      * The data source containing information.
@@ -59,6 +44,11 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
     private CalendarEvent mNextEvent;
 
     /**
+     * The current weather forecast.
+     */
+    private WeatherResult mForeCast;
+
+    /**
      * Constructs a new CompositeTrigger.
      *
      * @param triggers  the triggers that comprise of this trigger
@@ -67,33 +57,13 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
     UpcomingEventWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {
         super(triggers, holder);
         mTriggers = triggers;
+        mContextHolder = holder;
     }
 
     @Override
     public String getNotificationTitle() {
         return NOTIFICATION_TITLE;
     }
-
-    //TODO Intent
-//    public void notifyUser() {
-//        mNextEvent = mContextHolder.getTodaysEvents().get(0);
-//
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTimeInMillis(mNextEvent.getStartTime());
-//        String time = cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
-//        String location = mNextEvent.getLocation();
-//
-//        String notificationTitle = String.format(NOTIFICATION_TEXT, time, location);
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(mContext)
-//                        .setSmallIcon(R.drawable.basic_notification_icon)
-//                        .setContentTitle(NOTIFICATION_TITLE) // to do
-//                        .setContentText(notificationTitle)
-//                        .setContentIntent(getMapsIntent());
-//        NotificationManager mNotifyMgr =
-//                (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-//        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
-//    }
 
     @Override
     public Intent getNotificationIntent() {
@@ -108,7 +78,14 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
 
     @Override
     public String getNotificationMessage() {
-        return NOTIFICATION_TEXT;
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(mNextEvent.getStartTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm");
+        String time = dateFormat.format(cal.getTime());
+        String location = mNextEvent.getLocation();
+        String weather = mForeCast.getForecast().toString();
+
+        return String.format(NOTIFICATION_TEXT, time, weather, location);
     }
 
     @Override
@@ -116,6 +93,13 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
         boolean shouldTrigger = true;
         for (Trigger trigger: mTriggers) {
             shouldTrigger = shouldTrigger && trigger.isTriggered();
+        }
+
+        // Basic checking
+        if (shouldTrigger) {
+            List<CalendarEvent> today = mContextHolder.getTodaysEvents();
+            mNextEvent = today.get(0);
+            mForeCast = mContextHolder.getWeatherForecast();
         }
         return shouldTrigger;
     }

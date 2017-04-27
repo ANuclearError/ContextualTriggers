@@ -93,8 +93,7 @@ public class UpcomingEventTrigger extends SimpleTrigger {
         String time = cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE);
         String location = mNextEvent.getLocation();
 
-        String notificationText = String.format(NOTIFICATION_TEXT, time, location);
-        return notificationText;
+        return String.format(NOTIFICATION_TEXT, time, location);
     }
 
     @Override

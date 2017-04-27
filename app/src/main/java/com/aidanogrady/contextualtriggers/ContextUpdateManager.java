@@ -163,6 +163,9 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                                     addGeofence(workGeofence);
                                     isWorkGeofenceSet = true;
                                 }
+
+                                Intent calendarIntent = new Intent(this, CalendarDataSource.class);
+                                startService(calendarIntent);
                             }
 //                        }
                         break;
