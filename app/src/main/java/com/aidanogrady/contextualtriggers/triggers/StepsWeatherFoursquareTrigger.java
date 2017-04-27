@@ -19,7 +19,7 @@ public class StepsWeatherFoursquareTrigger extends CompositeTrigger {
     /**
      * The title of the notification.
      */
-    private static final String NOTIFICATION_TITLE = "Empty Calendar & Good Weather Trigger";
+    private static final String NOTIFICATION_TITLE = "Steps, Weather & FourSquare Trigger";
 
     /**
      * The text of this notification.

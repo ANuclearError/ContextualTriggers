@@ -91,7 +91,6 @@ public class TriggerManager {
         mTriggers.add(emptyCalendarWeatherTrigger);
         mTriggers.add(upcomingEventWeatherTrigger);
         mTriggers.add(atHomeGoodWeatherTrigger);
-        mTriggers.add(stepsTrigger);
         mTriggers.add(endOfWorkDayTrigger);
         mTriggers.add(stepsWeatherFoursquareTrigger);
     }
