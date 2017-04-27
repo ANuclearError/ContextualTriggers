@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by Calum on 26/04/2017.
  */
 
-class FoursquareVenue implements Serializable{
+public class FoursquareVenue implements Serializable{
 
     private int mCheckIns;
     private String mVenueName;

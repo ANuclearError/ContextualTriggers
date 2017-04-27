@@ -1,6 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
@@ -59,6 +60,11 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return NOTIFICATION_TEXT;
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

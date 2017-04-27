@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Intent;
+
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 public class BatteryTrigger extends SimpleTrigger {
@@ -31,6 +33,11 @@ public class BatteryTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return mMessage;
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

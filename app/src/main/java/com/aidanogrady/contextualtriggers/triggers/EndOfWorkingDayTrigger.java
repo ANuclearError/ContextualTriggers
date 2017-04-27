@@ -1,23 +1,11 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.app.NotificationManager;
-import android.content.Context;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.util.Pair;
+import android.content.Intent;
 
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Kristine on 16/04/2017.
@@ -46,6 +34,11 @@ public class EndOfWorkingDayTrigger extends SimpleTrigger {
     @Override
     public String getNotificationMessage() {
         return mNotificationMessage;
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

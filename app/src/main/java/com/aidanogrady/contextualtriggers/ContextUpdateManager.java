@@ -1,17 +1,17 @@
 package com.aidanogrady.contextualtriggers;
 
-import android.app.AlarmManager;
+import android.Manifest;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
@@ -31,6 +31,9 @@ import com.aidanogrady.contextualtriggers.context.data.StepCounter;
 import com.aidanogrady.contextualtriggers.context.data.WeatherResult;
 import com.aidanogrady.contextualtriggers.triggers.TriggerManager;
 import com.google.android.gms.location.Geofence;
+import com.permissioneverywhere.PermissionEverywhere;
+import com.permissioneverywhere.PermissionResponse;
+import com.permissioneverywhere.PermissionResultCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,9 +44,14 @@ import java.util.List;
  * The ContextUpdateManager is an Android service that is used to manage the data sources
  * and handle any updates that they may send.
  */
-public class ContextUpdateManager extends Service {
-
+public class ContextUpdateManager extends Service implements PermissionResultCallback {
     private static final String TAG = "ContextUpdateManager";
+
+    private static final String[] REQUIRED_PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_CALENDAR
+    };
 
     private TriggerManager triggerManager;
 
@@ -65,6 +73,8 @@ public class ContextUpdateManager extends Service {
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+
+        requestPermissions();
         wakeLock.acquire();
 
 
@@ -72,19 +82,13 @@ public class ContextUpdateManager extends Service {
 
         Intent stepCounter = new Intent(this, StepCounter.class);
         startService(stepCounter);
-        Intent locationIntent = new Intent(this, LocationDataSource.class);
-        startService(locationIntent);
         Intent weatherIntent = new Intent(this, OpenWeatherDataSource.class);
         startService(weatherIntent);
         Intent foursquareIntent = new Intent(this, FoursquareDataSource.class);
         startService(foursquareIntent);
-
         Intent activityIntent = new Intent(this, ActivityRecognitionDataSource.class);
         startService(activityIntent);
-
-        Intent calenderIntent = new Intent(this, CalendarDataSource.class);
-        startService(calenderIntent);
-
+        launchServicesWithPermissions();
 
         invokedServices = new ArrayList<>();
         contextHolder = new ContextHolder(this);
@@ -147,7 +151,8 @@ public class ContextUpdateManager extends Service {
                                 invokedServices.add(FoursquareDataSource.TAG);
 
                                 // check if can set any of geofences
-                                if (!isHomeGeofenceSet && isInTimeRange(2,4)) {
+                                if (!isHomeGeofenceSet) {
+                                    System.out.println("Home not set, adding geofence");
                                     Geofences homeGeofence = new Geofences("Home", latitude, longitude);
                                     DBHelper.addGeofence(homeGeofence);
                                     addGeofence(homeGeofence);
@@ -237,6 +242,9 @@ public class ContextUpdateManager extends Service {
                 + ":" + calendar.get(Calendar.MINUTE)
                 +":"+calendar.get(Calendar.SECOND));
 
+        boolean res = calendar.get(Calendar.HOUR_OF_DAY) >= from
+                && calendar.get(Calendar.HOUR_OF_DAY) <= to;
+        System.out.println("In time range: " + res);
         return calendar.get(Calendar.HOUR_OF_DAY) >= from
                 && calendar.get(Calendar.HOUR_OF_DAY) <= to;
     }
@@ -267,5 +275,39 @@ public class ContextUpdateManager extends Service {
     @Nullable @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void requestPermissions() {
+        PermissionEverywhere.getPermission(getApplicationContext(),
+                REQUIRED_PERMISSIONS,
+                2,
+                "Contextual Triggers",
+                "This service needs multple write permissions",
+                R.mipmap.ic_launcher)
+                .enqueue(this);
+    }
+
+    @Override
+    public void onComplete(PermissionResponse permissionResponse) {
+        launchServicesWithPermissions();
+    }
+
+    private void launchServicesWithPermissions() {
+        boolean coarse = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean fine = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+        if (fine && coarse) {
+            Intent locationIntent = new Intent(this, LocationDataSource.class);
+            startService(locationIntent);
+        }
+
+        boolean read = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED;
+        if (read) {
+            Intent calendarIntent = new Intent(this, CalendarDataSource.class);
+            startService(calendarIntent);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
+import android.content.Intent;
+
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.util.List;
@@ -31,6 +33,11 @@ public class WeatherLocationTimeCompositeTrigger extends CompositeTrigger {
     @Override
     public String getNotificationMessage() {
         return mNotificationMessage;
+    }
+
+    @Override
+    public Intent getNotificationIntent() {
+        return null;
     }
 
     @Override

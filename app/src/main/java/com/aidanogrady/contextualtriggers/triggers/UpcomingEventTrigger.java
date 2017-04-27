@@ -97,31 +97,15 @@ public class UpcomingEventTrigger extends SimpleTrigger {
         return notificationText;
     }
 
-    //TODO Intents need fixed
-//    String notificationTitle = String.format(NOTIFICATION_TEXT, time, location);
-//    NotificationCompat.Builder mBuilder =
-//            new NotificationCompat.Builder(mContext)
-//                    .setSmallIcon(R.drawable.basic_notification_icon)
-//                    .setContentTitle(NOTIFICATION_TITLE) // to do
-//                    .setContentText(notificationTitle)
-//                    .setContentIntent(getMapsIntent());
-//    NotificationManager mNotifyMgr =
-//            (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
-//        mNotifyMgr.notify(NOTIFICATION_ID, mBuilder.build());
-
-    /**
-     * Returns the intent for allowing for an .
-     *
-     * @return map intent
-     */
-    private PendingIntent getMapsIntent() {
+    @Override
+    public Intent getNotificationIntent() {
         String location = mNextEvent.getLocation();
         String locUri = Uri.encode(location);
         String baseUri = "google.navigation:q=%s&mode=w";
         Uri gmmIntentUri = Uri.parse(String.format(baseUri, locUri));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
-        return PendingIntent.getActivity(mContext, 0, mapIntent, 0);
+        return mapIntent;
     }
 
     @Override

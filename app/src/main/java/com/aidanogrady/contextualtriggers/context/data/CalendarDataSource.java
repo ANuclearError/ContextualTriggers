@@ -15,14 +15,9 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Pair;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
-import com.aidanogrady.contextualtriggers.R;
-import com.permissioneverywhere.PermissionEverywhere;
-import com.permissioneverywhere.PermissionResponse;
-import com.permissioneverywhere.PermissionResultCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * The CalendarDataSource provides information on the user's calendar. Triggers will be able to
@@ -30,7 +25,7 @@ import java.util.List;
  *
  * @author Aidan O'Grady
  */
-public class CalendarDataSource extends IntentService implements PermissionResultCallback {
+public class CalendarDataSource extends IntentService {
     public static final String TAG = "calendar";
 
     public static final String[] INSTANCES_PROJECTION = new String[] {
@@ -54,17 +49,6 @@ public class CalendarDataSource extends IntentService implements PermissionResul
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-
-        PermissionEverywhere.getPermission(getApplicationContext(),
-                new String[] {
-                        Manifest.permission.READ_CALENDAR
-                },
-                1,
-                "Contextual Triggers",
-                "This service needs calendar read and write permissions",
-                R.mipmap.ic_launcher)
-                .enqueue(this);
-
         return START_STICKY;
     }
 
@@ -124,14 +108,5 @@ public class CalendarDataSource extends IntentService implements PermissionResul
         today.set(Calendar.SECOND, 59);
         today.set(Calendar.MILLISECOND, 999);
         return new Pair<>(now, today.getTimeInMillis());
-    }
-
-    @Override
-    public void onComplete(PermissionResponse permissionResponse) {
-        boolean read = ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED;
-        if (!read) {
-            this.stopSelf();
-        }
     }
 }
