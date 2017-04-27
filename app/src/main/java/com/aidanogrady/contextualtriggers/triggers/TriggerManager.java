@@ -26,12 +26,13 @@ public class TriggerManager {
     //One notification every hour
     private double frequency = 1;
     private double lastNotificationTime;
-    private Trigger lastNotificationTrigger;
+    private List<Trigger> lastNotificationTriggers;
 
     public TriggerManager(Context context, ContextAPI holder){
         mContextHolder = holder;
         mContext = context;
         mTriggers = new ArrayList<>();
+        lastNotificationTriggers = new ArrayList<>();
 
         Trigger goodWeatherTrigger = new GoodWeatherTrigger(mContextHolder);
         Trigger endOfWorkingDayTrigger = new EndOfWorkingDayTrigger(mContextHolder);
@@ -91,7 +92,7 @@ public class TriggerManager {
             List<Trigger> activatedTriggers = new ArrayList<>();
             for (Trigger t : mTriggers) {
                 if (t.isTriggered()) {
-                    if(!t.equals(lastNotificationTrigger)) {
+                    if(!lastNotificationTriggers.contains(t)) {
                         activatedTriggers.add(t);
                     }
                 }
@@ -111,7 +112,10 @@ public class TriggerManager {
                 bestTrigger = t;
             }
         }
-        lastNotificationTrigger = bestTrigger;
+        if(lastNotificationTriggers.size() == 3) {
+            lastNotificationTriggers.remove(0);
+        }
+        lastNotificationTriggers.add(bestTrigger);
         sendNotification(1000, bestTrigger.getNotificationTitle(), bestTrigger.getNotificationMessage(),
                 bestTrigger.getNotificationIntent());
     }
