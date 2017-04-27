@@ -66,7 +66,7 @@ public class UpcomingEventWeatherTrigger extends CompositeTrigger {
      */
     UpcomingEventWeatherTrigger(List<Trigger> triggers, ContextAPI holder) {
         super(triggers, holder);
-
+        mTriggers = triggers;
     }
 
     @Override
