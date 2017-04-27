@@ -15,7 +15,7 @@ import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 import com.aidanogrady.contextualtriggers.context.DBHelper;
 
 /**
- * Created by ASUS on 14/04/2017.
+ * Created by Kristine on 14/04/2017.
  */
 
 public class StepCounter extends Service implements SensorEventListener {

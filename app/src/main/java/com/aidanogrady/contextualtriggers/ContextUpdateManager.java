@@ -151,14 +151,13 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                                 invokedServices.add(FoursquareDataSource.TAG);
 
                                 // check if can set any of geofences
-                                if (!isHomeGeofenceSet) {
-                                    System.out.println("Home not set, adding geofence");
+                                if (!isHomeGeofenceSet && isInTimeRange(2,4)) {
                                     Geofences homeGeofence = new Geofences("Home", latitude, longitude);
                                     DBHelper.addGeofence(homeGeofence);
                                     addGeofence(homeGeofence);
                                     isHomeGeofenceSet = true;
                                 }
-                                if (!isWorkGeofenceSet && isInTimeRange(0,2)) {
+                                if (!isWorkGeofenceSet && isInTimeRange(10,12)) {
                                     Geofences workGeofence = new Geofences("Work", latitude, longitude);
                                     DBHelper.addGeofence(workGeofence);
                                     addGeofence(workGeofence);
@@ -187,7 +186,7 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                         invokedServices.remove(CalendarDataSource.TAG);
                         break;
                     case "Geofence":
-                        Log.e(TAG, "transition happened: " + intent.getStringExtra("Transition"));
+                        Log.e(TAG, "transition happened: " + intent.getIntExtra("Transition", Integer.MAX_VALUE));
                         NotificationCompat.Builder mBuilder =
                                 new NotificationCompat.Builder(this)
                                         .setSmallIcon(R.drawable.basic_notification_icon)
@@ -202,10 +201,14 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                             case Geofence.GEOFENCE_TRANSITION_ENTER:
                                 if (triggeredGeofencesIds.contains("Work"))
                                     contextHolder.setAtWork(true);
+                                if (triggeredGeofencesIds.contains("Home"))
+                                    contextHolder.setAtHome(true);
                                 break;
                             case Geofence.GEOFENCE_TRANSITION_DWELL:
                                 if (triggeredGeofencesIds.contains("Work"))
                                     contextHolder.setAtWork(true);
+                                if (triggeredGeofencesIds.contains("Home"))
+                                    contextHolder.setAtHome(true);
                                 break;
                             case Geofence.GEOFENCE_TRANSITION_EXIT:
                                 if (triggeredGeofencesIds.contains("Work")) {
@@ -214,6 +217,8 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
                                     DBHelper.addWorkExit(calendar.getTimeInMillis());
                                     contextHolder.setAtWork(false);
                                 }
+                                if (triggeredGeofencesIds.contains("Home"))
+                                    contextHolder.setAtHome(false);
                                 break;
                         }
 

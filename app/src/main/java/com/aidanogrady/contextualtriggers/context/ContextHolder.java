@@ -25,6 +25,7 @@ public class ContextHolder implements ContextAPI {
     private FoursquareResult nearbyFoursquareData;
     private List<CalendarEvent> calendarEvents;
     private boolean atWork;
+    private boolean atHome;
 
     public ContextHolder(Context context) {
         // set default values
@@ -33,6 +34,7 @@ public class ContextHolder implements ContextAPI {
         this.weatherForecast = null;
         this.calendarEvents = null;
         this.atWork = false;
+        this.atHome = false;
     }
 
     @Override
@@ -129,11 +131,20 @@ public class ContextHolder implements ContextAPI {
         return DBHelper.getAvgWorkExitTime();
     }
 
+    @Override
+    public boolean getIsAtHome() {
+        return atHome;
+    }
+
     public void setAtWork(boolean atWork) {
         this.atWork = atWork;
     }
 
     public void setTodaysEvents(List<CalendarEvent> events) {
         this.calendarEvents = events;
+    }
+
+    public void setAtHome(boolean atHome) {
+        this.atHome = atHome;
     }
 }
