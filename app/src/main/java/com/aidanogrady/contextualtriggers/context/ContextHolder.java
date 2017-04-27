@@ -24,6 +24,7 @@ public class ContextHolder implements ContextAPI {
     private WeatherResult weatherForecast;
     private FoursquareResult nearbyFoursquareData;
     private List<CalendarEvent> calendarEvents;
+    private boolean atWork;
 
     public ContextHolder(Context context) {
         // set default values
@@ -31,6 +32,7 @@ public class ContextHolder implements ContextAPI {
         this.location = null;
         this.weatherForecast = null;
         this.calendarEvents = null;
+        this.atWork = false;
     }
 
     @Override
@@ -115,6 +117,20 @@ public class ContextHolder implements ContextAPI {
     @Override
     public SharedPreferences getSharedPreferences(String fileName) {
         return mContext.getSharedPreferences(fileName, 0);
+    }
+
+    @Override
+    public boolean getIsAtWork() {
+        return atWork;
+    }
+
+    @Override
+    public long getEndOfDayTime() {
+        return DBHelper.getAvgWorkExitTime();
+    }
+
+    public void setAtWork(boolean atWork) {
+        this.atWork = atWork;
     }
 
     public void setTodaysEvents(List<CalendarEvent> events) {

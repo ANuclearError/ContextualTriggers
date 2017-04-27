@@ -32,7 +32,8 @@ public class TriggerManager {
 
         Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContextHolder);
 
-        Trigger timeRangeTrigger = new TimeRangeTrigger(mContextHolder);
+        Trigger endOfWorkingDayTrigger = new EndOfWorkingDayTrigger(mContextHolder);
+        Trigger workLocationTrigger = new WorkLocationTrigger(mContextHolder);
         Trigger batteryTrigger = new BatteryTrigger(mContextHolder);
         Trigger foursquareTrigger = new FoursquareTrigger(mContextHolder);
 
@@ -55,6 +56,16 @@ public class TriggerManager {
                 mContextHolder);
 
         Trigger stepsTrigger = new StepsTrigger(mContextHolder);
+
+        List<Trigger> endOfWorkDayTriggerList = new ArrayList<>();
+        endOfWorkDayTriggerList.add(endOfWorkingDayTrigger);
+        endOfWorkDayTriggerList.add(workLocationTrigger);
+        endOfWorkDayTriggerList.add(goodWeatherTrigger);
+        Trigger endOfWorkDayTrigger = new WeatherLocationCompositeTrigger(
+                endOfWorkDayTriggerList,
+                mContextHolder);
+
+
         //Triggers
 //        mTriggers.add(batteryTrigger);
 //        mTriggers.add(timeRangeTrigger);
@@ -65,6 +76,7 @@ public class TriggerManager {
 //        mTriggers.add(emptyCalendarWeatherTrigger);
 //        mTriggers.add(upcomingEventWeatherTrigger);
         mTriggers.add(stepsTrigger);
+        mTriggers.add(endOfWorkDayTrigger);
     }
 
     public void update(){

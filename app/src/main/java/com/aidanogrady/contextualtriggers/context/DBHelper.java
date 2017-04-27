@@ -30,6 +30,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String STEPS_COLUMN_DATE = "Date";
     private static final String STEPS_COLUMN_STEPS = "Steps";
 
+    private static final String WORK_TABLE_NAME = "Work";
+    private static final String WORK_COLUMN_EXIT = "ExitTime";
+
     private static final String CREATE_GEOFENCE_TABLE_STMT =
             "CREATE TABLE " + GEOFENCE_TABLE_NAME + "( "
             + GEOFENCE_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -44,12 +47,19 @@ public class DBHelper extends SQLiteOpenHelper {
             + STEPS_COLUMN_STEPS + " INTEGER DEFAULT 0"
             + ");";
 
+    private static final String CREATE_WORK_TABLE_STMT =
+            "CREATE TABLE " + WORK_TABLE_NAME + " ( "
+            + WORK_COLUMN_EXIT + " INTEGER "
+            + ");";
+
     private static final String GEOFENCE_DROP_TABLE_STMT =
             "DROP TABLE IF EXISTS " + GEOFENCE_TABLE_NAME;
 
     private static final String STEPS_DROP_TABLE_STMT =
             "DROP TABLE IF EXISTS " + STEPS_TABLE_NAME;
 
+    private static final String WORK_DROP_TABLE_STMT =
+            "DROP TABLE IF EXISTS " + WORK_TABLE_NAME;
 
     private DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -60,13 +70,13 @@ public class DBHelper extends SQLiteOpenHelper {
             instance = new DBHelper(context);
 //        instance.onUpgrade(instance.getWritableDatabase(), DB_VERSION, DB_VERSION);
         Log.e("DB", "initialised");
-        Log.i("DB", "table created");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_GEOFENCE_TABLE_STMT);
         db.execSQL(CREATE_STEPS_TABLE_STMT);
+        db.execSQL(CREATE_WORK_TABLE_STMT);
         Log.e("DB", "table created");
     }
 
@@ -74,6 +84,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(GEOFENCE_DROP_TABLE_STMT);
         db.execSQL(STEPS_DROP_TABLE_STMT);
+        db.execSQL(WORK_DROP_TABLE_STMT);
         onCreate(db);
     }
 
@@ -99,7 +110,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void deleteGeofence(String geofenceName) {}
 
     public static void addSteps(long date, int steps) {
         System.out.println("Adding " + steps + " to " + date);
@@ -128,5 +138,20 @@ public class DBHelper extends SQLiteOpenHelper {
             c.close();
         }
         return steps;
+    }
+
+    public static void addWorkExit(long date) {
+        ContentValues values = new ContentValues();
+        values.put(WORK_COLUMN_EXIT, date);
+        instance.getWritableDatabase().insert(WORK_TABLE_NAME, null, values);
+    }
+
+    public static long getAvgWorkExitTime() {
+        String query = "SELECT AVG(" + WORK_COLUMN_EXIT + ") FROM " + WORK_TABLE_NAME;
+        Cursor cursor = instance.getWritableDatabase().rawQuery(query, new String[]{});
+        if (cursor.moveToFirst())
+            return cursor.getLong(0);
+
+        return Integer.MAX_VALUE;
     }
 }

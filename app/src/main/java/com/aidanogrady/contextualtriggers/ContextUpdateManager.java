@@ -153,7 +153,7 @@ public class ContextUpdateManager extends Service {
                                     addGeofence(homeGeofence);
                                     isHomeGeofenceSet = true;
                                 }
-                                if (!isWorkGeofenceSet && isInTimeRange(14,16)) {
+                                if (!isWorkGeofenceSet && isInTimeRange(0,2)) {
                                     Geofences workGeofence = new Geofences("Work", latitude, longitude);
                                     DBHelper.addGeofence(workGeofence);
                                     addGeofence(workGeofence);
@@ -181,23 +181,34 @@ public class ContextUpdateManager extends Service {
                         contextHolder.setTodaysEvents(events);
                         invokedServices.remove(CalendarDataSource.TAG);
                         break;
-                    case "Geofences":
+                    case "Geofence":
                         Log.e(TAG, "transition happened: " + intent.getStringExtra("Transition"));
                         NotificationCompat.Builder mBuilder =
                                 new NotificationCompat.Builder(this)
                                         .setSmallIcon(R.drawable.basic_notification_icon)
                                         .setContentTitle("GEOFENCE")
-                                        .setContentText("IT WORKED " + intent.getStringExtra("Transition"));
+                                        .setContentText("IT WORKED " + intent.getIntExtra("Transition", Integer.MAX_VALUE));
                         NotificationManager mNotifyMgr =
                                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                         mNotifyMgr.notify(1000, mBuilder.build());
 
+                        ArrayList<String> triggeredGeofencesIds = intent.getStringArrayListExtra("Geofences");
                         switch (intent.getIntExtra("Transition", Integer.MAX_VALUE)) {
                             case Geofence.GEOFENCE_TRANSITION_ENTER:
+                                if (triggeredGeofencesIds.contains("Work"))
+                                    contextHolder.setAtWork(true);
                                 break;
                             case Geofence.GEOFENCE_TRANSITION_DWELL:
+                                if (triggeredGeofencesIds.contains("Work"))
+                                    contextHolder.setAtWork(true);
                                 break;
                             case Geofence.GEOFENCE_TRANSITION_EXIT:
+                                if (triggeredGeofencesIds.contains("Work")) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(new Date());
+                                    DBHelper.addWorkExit(calendar.getTimeInMillis());
+                                    contextHolder.setAtWork(false);
+                                }
                                 break;
                         }
 

@@ -47,13 +47,13 @@ public class GeofenceTransitionsService extends IntentService {
 
             // send details to main service
             Intent managerIntent = new Intent(this, ContextUpdateManager.class);
-            managerIntent.putExtra("DataSource", "Geofences");
-            managerIntent.putExtra("Transition", getTransition(geofenceTransition));
+            managerIntent.putExtra("DataSource", "Geofence");
+            managerIntent.putExtra("Transition", geofenceTransition);
             managerIntent.putStringArrayListExtra("Geofences", geofenceTransitionDetails);
             startService(managerIntent);
 
         } else
-            Log.e(TAG, "Transition we are not interested in happened:" + geofenceTransition);
+            Log.e(TAG, "Unknown transition " + geofenceTransition);
     }
 
     private ArrayList<String> getGeofenceTransitionDetails(List<Geofence> triggeringGeofences) {
@@ -74,7 +74,7 @@ public class GeofenceTransitionsService extends IntentService {
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 return "Dwell";
             default:
-                return "Unknown transistion";
+                return "Unknown";
         }
     }
 }

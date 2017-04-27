@@ -61,7 +61,7 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private List<Geofence> mGeofenceList;
 
-    private static final int GEOFENCE_RADIUS = 5;
+    private static final int GEOFENCE_RADIUS = 50;
 
     private PendingIntent mGeofencePendingIntent;
 
@@ -235,9 +235,9 @@ public class LocationDataSource extends IntentService implements LocationListene
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
         if (fine && coarse) {
-//            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
-//                                    getGeofencingRequest(),
-//                                    getGeofencePendingIntent());
+            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient,
+                                    getGeofencingRequest(),
+                                    getGeofencePendingIntent());
         }
     }
 

@@ -34,4 +34,7 @@ public interface ContextAPI  {
 
     SharedPreferences getSharedPreferences(String fileName);
 
+    boolean getIsAtWork();
+
+    long getEndOfDayTime();
 }
