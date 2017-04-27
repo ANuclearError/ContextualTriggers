@@ -73,9 +73,9 @@ public class ContextUpdateManager extends Service implements PermissionResultCal
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-
-        requestPermissions();
         wakeLock.acquire();
+        requestPermissions();
+
 
 
         connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
