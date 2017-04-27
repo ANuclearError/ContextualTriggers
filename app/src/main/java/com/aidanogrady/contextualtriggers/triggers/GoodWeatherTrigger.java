@@ -32,7 +32,7 @@ public class GoodWeatherTrigger extends SimpleTrigger {
     /**
      * The current weather forecast.
      */
-    private WeatherResult mForeCast;
+    private WeatherResult mForecast;
 
     /**
      * Constructs a new SimpleTrigger.
@@ -51,7 +51,7 @@ public class GoodWeatherTrigger extends SimpleTrigger {
 
     @Override
     public String getNotificationMessage() {
-        return String.format(NOTIFICATION_TEXT, mForeCast.getForecast().toString());
+        return String.format(NOTIFICATION_TEXT, mForecast.getForecast().toString());
     }
 
     @Override
@@ -61,11 +61,11 @@ public class GoodWeatherTrigger extends SimpleTrigger {
 
     @Override
     public Boolean isTriggered() {
-        mForeCast = mContextHolder.getWeatherForecast();
-        if (mForeCast == null)
+        mForecast = mContextHolder.getWeatherForecast();
+        if (mForecast == null)
             return false;
 
-        switch (mForeCast.getForecast()) {
+        switch (mForecast.getForecast()) {
             case CLEAR:
             case CLOUDY:
                 return true;
