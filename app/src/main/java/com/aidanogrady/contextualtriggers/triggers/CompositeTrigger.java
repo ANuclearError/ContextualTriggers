@@ -1,10 +1,7 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.content.Context;
-
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +16,6 @@ abstract class CompositeTrigger implements Trigger {
      * All triggers that compose this trigger.
      */
     private List<Trigger> mTriggers;
-    private Context mContext;
     private ContextAPI mHolder;
 
     /**
@@ -39,33 +35,4 @@ abstract class CompositeTrigger implements Trigger {
         return complexity;
     }
 
-    /**
-     * Adds the given trigger to the composite trigger.
-     *
-     * @param trigger  the new trigger to be added.
-     */
-    public void addTrigger(Trigger trigger) {
-        mTriggers.add(trigger);
-    }
-
-    /**
-     * Removes the given trigger to the composite trigger.
-     *
-     * @param trigger  the trigger to be removed.
-     */
-    public void removeTrigger(Trigger trigger) {
-        mTriggers.remove(trigger);
-    }
-
-    /**
-     * Returns the trigger at the given index.
-     *
-     * @param index  the index to retrieve
-     * @return null if the given index is invalid, otherwise the trigger at the given index
-     */
-    public Trigger getTrigger(int index) {
-        if (index < 0 || index >= mTriggers.size())
-            return null;
-        return mTriggers.get(index);
-    }
 }

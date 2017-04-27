@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.aidanogrady.contextualtriggers.context.data.LocationDataSource;
-
 /**
  * The BootBroadcastReceiver handles starting up the framework's services when the device is booted.
  *

@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by ASUS on 18/04/2017.
+ * Created by Kristine on 18/04/2017.
  */
 
 public class StepsTrigger extends SimpleTrigger {

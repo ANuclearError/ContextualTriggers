@@ -1,16 +1,10 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.util.List;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 public class StepsWeatherCompositeTrigger extends CompositeTrigger {

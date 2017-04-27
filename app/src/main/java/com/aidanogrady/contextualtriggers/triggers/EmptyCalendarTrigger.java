@@ -1,6 +1,5 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
@@ -26,16 +25,6 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
             "You've nothing planned today, why not go for a walk?";
 
     /**
-     * The name of the trigger.
-     */
-    private String mName;
-
-    /**
-     * Android context for handling intents etc.
-     */
-    private Context mContext;
-
-    /**
      * The data source holder
      */
     private ContextAPI mContextHolder;
@@ -56,7 +45,6 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
         return NOTIFICATION_TITLE;
     }
 
-
     @Override
     public String getNotificationMessage() {
         return NOTIFICATION_TEXT;
@@ -70,7 +58,6 @@ public class EmptyCalendarTrigger extends SimpleTrigger {
     @Override
     public Boolean isTriggered() {
         List<CalendarEvent> events = mContextHolder.getTodaysEvents();
-        System.out.printf("Events is null: %s", events == null);
         return events != null && events.isEmpty();
     }
 }

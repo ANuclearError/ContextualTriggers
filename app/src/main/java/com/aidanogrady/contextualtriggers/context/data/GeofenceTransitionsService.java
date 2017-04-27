@@ -27,20 +27,17 @@ public class GeofenceTransitionsService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
-            Log.e(TAG, geofencingEvent.getErrorCode() + "");
+            Log.d(TAG, geofencingEvent.getErrorCode() + "");
             return;
         }
 
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT
-                || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
+                || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
 
-            Log.e(TAG, "Triggered transition" + getTransition(geofenceTransition));
-            Toast.makeText(getApplicationContext(),
-                    ("transition happened:" + getTransition(geofenceTransition)),
-                    Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Triggered transition" + getTransition(geofenceTransition));
 
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
             ArrayList<String> geofenceTransitionDetails = getGeofenceTransitionDetails(triggeringGeofences);

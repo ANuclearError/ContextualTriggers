@@ -1,7 +1,5 @@
 package com.aidanogrady.contextualtriggers.triggers;
 
-import android.content.Context;
-
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 /**
@@ -21,7 +19,6 @@ abstract class SimpleTrigger implements Trigger {
 
     @Override
     public int getComplexity() {
-        // Single a single trigger requires a single data.
         return 1;
     }
 }

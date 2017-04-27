@@ -14,7 +14,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
-import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.Geofences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -24,9 +23,6 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.permissioneverywhere.PermissionEverywhere;
-import com.permissioneverywhere.PermissionResponse;
-import com.permissioneverywhere.PermissionResultCallback;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +33,7 @@ import java.util.List;
  * notifying concerned triggers.
  *
  * @author Aidan O'Grady
+ * @author Kristine Semjonova
  */
 public class LocationDataSource extends IntentService implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
@@ -53,8 +50,6 @@ public class LocationDataSource extends IntentService implements LocationListene
     private GoogleApiClient mGoogleApiClient;
 
     private LocationRequest mLocationRequest;
-
-    private boolean mIsServicesAvailable;
 
     // Geofences
 
@@ -88,17 +83,10 @@ public class LocationDataSource extends IntentService implements LocationListene
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
-        mIsServicesAvailable = isServicesConnected();
 
         mGeofenceList = new ArrayList<>();
         mGeofencePendingIntent = null;
     }
-
-    private boolean isServicesConnected() {
-        int res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-        return ConnectionResult.SUCCESS == res;
-    }
-
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -109,11 +97,9 @@ public class LocationDataSource extends IntentService implements LocationListene
         if (bundle != null) {
             Log.e(TAG, "in on handle intent");
             if (intent.hasExtra("Geofences")) {
-                Geofences geofence
-                        = intent.getParcelableExtra("Geofences");
+                Geofences geofence = intent.getParcelableExtra("Geofences");
                 createGeofence(geofence);
                 addGeofences();
-
             }
         }
 
@@ -127,12 +113,13 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.e(TAG, "on Location Changed triggered: "
+        Log.d(TAG, "on Location Changed triggered: "
                 + "lat " + location.getLatitude() + " long" + location.getLongitude());
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(location.getTime());
-        Log.e(TAG, "Current location time " + calendar.get(Calendar.HOUR_OF_DAY)
+
+        Log.d(TAG, "Current location time " + calendar.get(Calendar.HOUR_OF_DAY)
                 + ":" + calendar.get(Calendar.MINUTE)
                 +":"+calendar.get(Calendar.SECOND));
 
@@ -142,10 +129,6 @@ public class LocationDataSource extends IntentService implements LocationListene
         intent.putExtra("Longitude", location.getLongitude());
         startService(intent);
 
-        Toast.makeText(getApplicationContext(),
-                ("Lat " + location.getLatitude() + "Long "+ location.getLongitude()),
-                Toast.LENGTH_LONG).show();
-        System.out.printf("Lat %f Long %f", location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -154,7 +137,6 @@ public class LocationDataSource extends IntentService implements LocationListene
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Connected");
         startService(intent);
-        mIsServicesAvailable = isServicesConnected();
     }
 
     @Override
@@ -169,19 +151,15 @@ public class LocationDataSource extends IntentService implements LocationListene
         boolean fine = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        System.out.println("Checking permissions");
-        System.out.println("Listening: " + mListening);
         if (fine && coarse && !mListening) {
-            System.out.println("Permissions granted");
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                     mLocationRequest,
                     this);
             mListening = true;
         }
-        System.out.println("Listening: " + mListening);
     }
 
-    // Geofences methods below
+    // Geofence
 
     private void createGeofence(Geofences geofence) {
         mGeofenceList.add(new Geofence.Builder()

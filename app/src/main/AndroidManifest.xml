@@ -39,8 +39,6 @@
         <service android:name=".ContextUpdateManager" />
         <service android:name=".context.data.StepCounter" />
 
-        <service android:name=".triggers.LocationTrigger"
-            android:process=":my_process"/>
         <service android:name=".context.data.LocationDataSource" />
         <service android:name=".context.data.ActivityRecognitionDataSource" />
         <service android:name=".context.data.OpenWeatherDataSource" />

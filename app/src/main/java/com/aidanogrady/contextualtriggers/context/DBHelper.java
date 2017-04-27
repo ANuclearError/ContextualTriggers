@@ -68,8 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static void init(Context context) {
         if (instance == null)
             instance = new DBHelper(context);
-//        instance.onUpgrade(instance.getWritableDatabase(), DB_VERSION, DB_VERSION);
-        Log.e("DB", "initialised");
+        Log.d("DB", "initialised");
     }
 
     @Override
@@ -77,7 +76,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_GEOFENCE_TABLE_STMT);
         db.execSQL(CREATE_STEPS_TABLE_STMT);
         db.execSQL(CREATE_WORK_TABLE_STMT);
-        Log.e("DB", "table created");
+        Log.d("DB", "table created");
     }
 
     @Override
