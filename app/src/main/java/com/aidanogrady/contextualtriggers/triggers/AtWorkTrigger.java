@@ -8,16 +8,16 @@ import com.aidanogrady.contextualtriggers.context.ContextAPI;
  * Created by Kristine on 27/04/2017.
  */
 
-public class WorkLocationTrigger extends SimpleTrigger {
+public class AtWorkTrigger extends SimpleTrigger {
 
     private static final String NOTIFICATION_TITLE = "At Work Trigger";
     private static final String NOTIFICATION_TEXT =
-            "It's %s outside, let's go for a walk after work!";
+            "You should take a small break from work and go for a walk.";
 
     private ContextAPI mContextHolder;
     private boolean atWork;
 
-    WorkLocationTrigger(ContextAPI holder) {
+    AtWorkTrigger(ContextAPI holder) {
         super(holder);
         this.mContextHolder = holder;
     }

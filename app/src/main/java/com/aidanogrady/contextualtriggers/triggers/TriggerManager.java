@@ -37,7 +37,7 @@ public class TriggerManager {
         Trigger goodWeatherTrigger = new GoodWeatherTrigger(mContextHolder);
         Trigger endOfWorkingDayTrigger = new EndOfWorkingDayTrigger(mContextHolder);
         Trigger atHomeTrigger = new AtHomeTrigger(mContextHolder);
-        Trigger workLocationTrigger = new WorkLocationTrigger(mContextHolder);
+        Trigger workLocationTrigger = new AtWorkTrigger(mContextHolder);
         Trigger batteryTrigger = new BatteryTrigger(mContextHolder);
         Trigger foursquareTrigger = new FoursquareTrigger(mContextHolder);
 

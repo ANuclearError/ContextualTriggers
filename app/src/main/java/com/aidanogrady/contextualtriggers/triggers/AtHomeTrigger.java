@@ -9,7 +9,6 @@ import com.aidanogrady.contextualtriggers.context.ContextAPI;
  */
 
 public class AtHomeTrigger extends SimpleTrigger {
-
     private static final String NOTIFICATION_TITLE = "At Home Trigger";
     private static final String NOTIFICATION_TEXT = "Don't sit at home, go for a walk!";
 
