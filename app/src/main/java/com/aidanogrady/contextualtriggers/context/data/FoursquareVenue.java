@@ -34,4 +34,12 @@ public class FoursquareVenue implements Serializable{
         return mVenueCategory;
     }
 
+    @Override
+    public String toString() {
+        return "FoursquareVenue{" +
+                "mCheckIns=" + mCheckIns +
+                ", mVenueName='" + mVenueName + '\'' +
+                ", mVenueCategory='" + mVenueCategory + '\'' +
+                '}';
+    }
 }

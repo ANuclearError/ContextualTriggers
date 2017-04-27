@@ -81,6 +81,11 @@ public class FoursquareDataSource extends IntentService {
         FoursquareResult result = FoursquareResult.CREATOR.createFromParcel(parcel);
         parcel.recycle();
 
+        System.out.println("Foursquare result:");
+        for (FoursquareVenue venue: venues) {
+            System.out.println("\t" + venue);
+        }
+
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Foursquare");
         intent.putExtra("nearby", result);
@@ -94,6 +99,10 @@ public class FoursquareDataSource extends IntentService {
         return null;
     }
 
+    /**
+     * Category info can be found here: https://developer.foursquare.com/categorytree
+     **/
+
     private class FoursquareDataRequester implements Runnable {
 
         String latitude;
@@ -101,14 +110,14 @@ public class FoursquareDataSource extends IntentService {
         String client_id = "V5OSSBX1OM1NHPMXR5KOGZLFNX3UXWPHSUNRRVY2WLHBK05J";
         String client_secret = "QP0JSTHIPVDJLT4NP5RKPYI4OGTELJ2SUXSBMX0VLC4PT4NY";
         String version = "20170417";
-        String outdoorCategory = "56aa371be4b08b9a8d57355e," +
-                "52e81612bcbc57f1066b7a23," +
-                "4eb1d4d54b900d56c88a45fc," +
-                "52e81612bcbc57f1066b7a21," +
-                "52e81612bcbc57f1066b7a13," +
-                "4bf58dd8d48988d163941735," +
-                "4bf58dd8d48988d159941735," +
-                "52e81612bcbc57f1066b7a22";
+        String outdoorCategory = "56aa371be4b08b9a8d57355e," +  // bike trail
+                "52e81612bcbc57f1066b7a23," +                   // forest
+                "4eb1d4d54b900d56c88a45fc," +                   // mountain
+                "52e81612bcbc57f1066b7a21," +                   // national park
+                "52e81612bcbc57f1066b7a13," +                   // nature preserve
+                "4bf58dd8d48988d163941735," +                   // park
+                "4bf58dd8d48988d159941735," +                   // trail
+                "52e81612bcbc57f1066b7a22";                     // botanical garden
 
         String radius = "400";
 
