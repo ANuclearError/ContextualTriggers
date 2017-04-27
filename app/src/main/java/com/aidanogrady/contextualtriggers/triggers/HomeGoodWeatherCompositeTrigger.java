@@ -6,10 +6,6 @@ import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
 import java.util.List;
 
-/**
- * Created by ASUS on 27/04/2017.
- */
-
 public class HomeGoodWeatherCompositeTrigger extends CompositeTrigger {
 
     private ContextAPI mContextHolder;
