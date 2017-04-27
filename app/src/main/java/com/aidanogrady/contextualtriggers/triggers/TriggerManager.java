@@ -9,7 +9,9 @@ import android.support.v4.app.NotificationCompat;
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -20,7 +22,7 @@ public class TriggerManager {
     private Context mContext;
     private ContextAPI mContextHolder;
 
-    private long lastNotificationTime;
+    private double lastNotificationTime;
 
     public TriggerManager(Context context, ContextAPI holder){
         mContextHolder = holder;
@@ -72,13 +74,15 @@ public class TriggerManager {
     }
 
     public void update(){
-        List<Trigger> activatedTriggers = new ArrayList<>();
-        for(Trigger t: mTriggers){
-            if(t.isTriggered()){
-                activatedTriggers.add(t);
+        if(getTime() > 6 && getTime() < 20) {
+            List<Trigger> activatedTriggers = new ArrayList<>();
+            for (Trigger t : mTriggers) {
+                if (t.isTriggered()) {
+                    activatedTriggers.add(t);
+                }
             }
+            handleNotifications(activatedTriggers);
         }
-        handleNotifications(activatedTriggers);
     }
 
     private void handleNotifications(List<Trigger> activatedTriggers){
@@ -107,5 +111,12 @@ public class TriggerManager {
                 (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         mNotifyMgr.notify(id, mBuilder.build());
+    }
+
+
+    private Double getTime() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH.mm");
+        return Double.parseDouble(dateFormat.format(cal.getTime()));
     }
 }
