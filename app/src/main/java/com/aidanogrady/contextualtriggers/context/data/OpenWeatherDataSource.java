@@ -84,21 +84,22 @@ public class OpenWeatherDataSource extends IntentService {
     }
 
     private void sendResult(WeatherForecast forecast, double temp, int humidity, double wind) {
-        Parcel parcel = Parcel.obtain();
-        parcel.writeString(forecast.name());
-        parcel.writeDouble(temp);
-        parcel.writeInt(humidity);
-        parcel.writeDouble(wind);
-        parcel.setDataPosition(0);
-        WeatherResult result = WeatherResult.CREATOR.createFromParcel(parcel);
-        parcel.recycle();
-
+        WeatherResult result = null;
+        if (forecast != null) {
+            Parcel parcel = Parcel.obtain();
+            parcel.writeString(forecast.name());
+            parcel.writeDouble(temp);
+            parcel.writeInt(humidity);
+            parcel.writeDouble(wind);
+            parcel.setDataPosition(0);
+            result = WeatherResult.CREATOR.createFromParcel(parcel);
+            parcel.recycle();
+        }
         System.out.println("Weather result: " + result);
         Intent intent = new Intent(this, ContextUpdateManager.class);
         intent.putExtra("DataSource", "Weather");
         intent.putExtra(WeatherResult.TAG, result);
         startService(intent);
-
     }
 
     @Nullable
@@ -170,10 +171,8 @@ public class OpenWeatherDataSource extends IntentService {
 
                 JSONObject jsonObject = new JSONObject(buffer.toString());
                 handleResult(jsonObject);
-
-
             } catch (Exception e) {
-                e.printStackTrace();
+                sendResult(null, 0, 0, 0);
             }
         }
 
@@ -193,7 +192,7 @@ public class OpenWeatherDataSource extends IntentService {
                 if (forecast != null)
                     sendResult(forecast, temperature, humidity, windSpeed);
             } catch (Exception e) {
-                e.printStackTrace();
+                sendResult(null, 0, 0, 0);
             }
         }
     }

@@ -6,6 +6,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.context.data.CalendarEvent;
 import com.aidanogrady.contextualtriggers.context.data.FoursquareResult;
@@ -60,6 +61,7 @@ public class ContextHolder implements ContextAPI {
         cal.set(Calendar.MILLISECOND, 0);
         steps += DBHelper.getSteps(cal.getTimeInMillis());
         DBHelper.addSteps(cal.getTimeInMillis(), steps);
+        Toast.makeText(mContext, "Steps walked today: " + steps, Toast.LENGTH_SHORT).show();
     }
 
     public void setLocation(Pair<Double, Double> location) {

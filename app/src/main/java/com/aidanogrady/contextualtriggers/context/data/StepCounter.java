@@ -9,10 +9,8 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
-import com.aidanogrady.contextualtriggers.context.DBHelper;
 
 /**
  * Created by ASUS on 14/04/2017.
@@ -36,7 +34,6 @@ public class StepCounter extends Service implements SensorEventListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //Log.e(TAG, "In onStartCommand");
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 
@@ -44,8 +41,7 @@ public class StepCounter extends Service implements SensorEventListener {
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
             Log.e(TAG, "successfully registered");
         } else {
-           // Log.e(TAG, "no step counter in the device");
-            Intent i = new Intent(this, ContextUpdateManager.class);
+            intent = new Intent(this, ContextUpdateManager.class);
             intent.putExtra("DataSource", "Steps");
             intent.putExtra("Count", -1);
             startService(intent);
@@ -63,7 +59,6 @@ public class StepCounter extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         int steps = (int) event.values[0];
-        System.out.println(steps + " steps since boot");
         if (mFirstLoad) {
             mTotalStepsSinceBoot = steps;
             mFirstLoad = false;
@@ -71,7 +66,6 @@ public class StepCounter extends Service implements SensorEventListener {
             int diff = steps - mTotalStepsSinceBoot;
             if (diff > THRESHOLD) {
                 mTotalStepsSinceBoot = steps;
-                System.out.println("Step diff: " + diff);
                 Intent intent = new Intent(this, ContextUpdateManager.class);
                 intent.putExtra("DataSource", "Steps");
                 intent.putExtra("Count", diff);
@@ -79,7 +73,6 @@ public class StepCounter extends Service implements SensorEventListener {
             }
         }
     }
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) { }

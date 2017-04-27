@@ -73,15 +73,15 @@ public class TriggerManager {
 
 
         //Triggers
-//        mTriggers.add(batteryTrigger);
-//        mTriggers.add(locationTrigger);
-//        mTriggers.add(weatherLocationComposite);
-//        mTriggers.add(foursquareTrigger);
-//        mTriggers.add(goodWeatherTrigger);
-//        mTriggers.add(emptyCalendarWeatherTrigger);
+        mTriggers.add(batteryTrigger);
+        mTriggers.add(locationTrigger);
+        mTriggers.add(weatherLocationComposite);
+        mTriggers.add(foursquareTrigger);
+        mTriggers.add(goodWeatherTrigger);
+        mTriggers.add(emptyCalendarWeatherTrigger);
         mTriggers.add(upcomingEventWeatherTrigger);
-//        mTriggers.add(stepsTrigger);
-//        mTriggers.add(endOfWorkDayTrigger);
+        mTriggers.add(stepsTrigger);
+        mTriggers.add(endOfWorkDayTrigger);
     }
 
     public void update(){
