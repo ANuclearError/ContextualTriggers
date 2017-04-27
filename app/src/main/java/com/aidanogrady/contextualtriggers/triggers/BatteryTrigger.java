@@ -20,7 +20,7 @@ public class BatteryTrigger extends SimpleTrigger {
     public BatteryTrigger(ContextAPI holder) {
         super(holder);
         mContextHolder = holder;
-        mThreshold = 75;
+        mThreshold = 50;
         mTitle = "Battery Notification";
         mMessage = "Battery below " + mThreshold + "%";
     }
@@ -44,7 +44,7 @@ public class BatteryTrigger extends SimpleTrigger {
     public Boolean isTriggered() {
 
         int batteryLevel = mContextHolder.getBatteryLevel();
-        return batteryLevel <= mThreshold && batteryLevel != -1;
+        return batteryLevel >= mThreshold && batteryLevel != -1;
 
     }
 }
