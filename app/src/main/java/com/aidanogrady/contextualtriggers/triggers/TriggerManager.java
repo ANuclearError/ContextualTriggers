@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.aidanogrady.contextualtriggers.R;
 import com.aidanogrady.contextualtriggers.context.ContextAPI;
@@ -22,7 +23,10 @@ public class TriggerManager {
     private Context mContext;
     private ContextAPI mContextHolder;
 
+    //One notification every hour
+    private double frequency = 1;
     private double lastNotificationTime;
+    private Trigger lastNotificationTrigger;
 
     public TriggerManager(Context context, ContextAPI holder){
         mContextHolder = holder;
@@ -39,6 +43,7 @@ public class TriggerManager {
         Trigger weatherLocationComposite = new WeatherLocationCompositeTrigger(weatherLocationList, mContextHolder);
 
         Trigger endOfWorkingDayTrigger = new EndOfWorkingDayTrigger(mContextHolder);
+        Trigger atHomeTrigger = new AtHomeTrigger(mContextHolder);
         Trigger workLocationTrigger = new WorkLocationTrigger(mContextHolder);
         Trigger batteryTrigger = new BatteryTrigger(mContextHolder);
         Trigger foursquareTrigger = new FoursquareTrigger(mContextHolder);
@@ -71,6 +76,12 @@ public class TriggerManager {
                 endOfWorkDayTriggerList,
                 mContextHolder);
 
+        List<Trigger> atHomeGoodWeatherTriggerList = new ArrayList<>();
+        atHomeGoodWeatherTriggerList.add(atHomeTrigger);
+        atHomeGoodWeatherTriggerList.add(goodWeatherTrigger);
+        Trigger atHomeGoodWeatherTrigger = new HomeGoodWeatherCompositeTrigger(
+                atHomeGoodWeatherTriggerList,
+                mContextHolder);
 
         //Triggers
         mTriggers.add(batteryTrigger);
@@ -80,6 +91,7 @@ public class TriggerManager {
         mTriggers.add(goodWeatherTrigger);
         mTriggers.add(emptyCalendarWeatherTrigger);
         mTriggers.add(upcomingEventWeatherTrigger);
+        mTriggers.add(atHomeGoodWeatherTrigger);
         mTriggers.add(stepsTrigger);
         mTriggers.add(endOfWorkDayTrigger);
     }
@@ -89,20 +101,29 @@ public class TriggerManager {
             List<Trigger> activatedTriggers = new ArrayList<>();
             for (Trigger t : mTriggers) {
                 if (t.isTriggered()) {
-                    activatedTriggers.add(t);
+                    if(!t.equals(lastNotificationTrigger)) {
+                        activatedTriggers.add(t);
+                    }
                 }
             }
-            handleNotifications(activatedTriggers);
+            if(!activatedTriggers.isEmpty() && frequencyCheck()) {
+                handleNotifications(activatedTriggers);
+            }
+        }else{
+            lastNotificationTime = 5;
         }
     }
 
     private void handleNotifications(List<Trigger> activatedTriggers){
-        int count = 100;
+        Trigger bestTrigger = activatedTriggers.get(0);
         for (Trigger t: activatedTriggers) {
-            sendNotification(count, t.getNotificationTitle(), t.getNotificationMessage(),
-                    t.getNotificationIntent());
-            count++;
+            if(t.getComplexity() > bestTrigger.getComplexity()){
+                bestTrigger = t;
+            }
         }
+        lastNotificationTrigger = bestTrigger;
+        sendNotification(1000, bestTrigger.getNotificationTitle(), bestTrigger.getNotificationMessage(),
+                bestTrigger.getNotificationIntent());
     }
 
 
@@ -121,9 +142,15 @@ public class TriggerManager {
         NotificationManager mNotifyMgr =
                 (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
+        Log.d("TriggerManager", "Notification Sent");
+        lastNotificationTime = getTime();
         mNotifyMgr.notify(id, mBuilder.build());
     }
 
+    private boolean frequencyCheck(){
+        Double timeDifference = getTime() - lastNotificationTime;
+        return timeDifference >= frequency;
+    }
 
     private Double getTime() {
         Calendar cal = Calendar.getInstance();

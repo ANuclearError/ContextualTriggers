@@ -60,7 +60,7 @@ public class LocationDataSource extends IntentService implements LocationListene
 
     private List<Geofence> mGeofenceList;
 
-    private static final int GEOFENCE_RADIUS = 50;
+    private static final int GEOFENCE_RADIUS = 25;
 
     private PendingIntent mGeofencePendingIntent;
 

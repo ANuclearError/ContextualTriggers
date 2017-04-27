@@ -37,4 +37,6 @@ public interface ContextAPI  {
     boolean getIsAtWork();
 
     long getEndOfDayTime();
+
+    boolean getIsAtHome();
 }

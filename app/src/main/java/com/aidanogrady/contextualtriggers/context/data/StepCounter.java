@@ -13,7 +13,7 @@ import android.util.Log;
 import com.aidanogrady.contextualtriggers.ContextUpdateManager;
 
 /**
- * Created by ASUS on 14/04/2017.
+ * Created by Kristine on 14/04/2017.
  */
 
 public class StepCounter extends Service implements SensorEventListener {
